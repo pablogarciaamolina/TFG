@@ -133,3 +133,4 @@ cython_debug/
 
 data
 *.ipynb
+develop_guide.md
