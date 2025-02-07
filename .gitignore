@@ -131,6 +131,5 @@ cython_debug/
 
 #--------------------------
 
-data
+*.csv
 *.ipynb
-develop_guide.md

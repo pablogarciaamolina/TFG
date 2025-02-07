@@ -1,0 +1,187 @@
+NOTE: 
+data2 -> TrafficLabelling_
+data1 -> MachineLearningCVE
+
+np.setdiff1d(data2.columns.values, data1.columns.values)
+array([' Destination IP', ' Protocol', ' Source IP', ' Source Port',
+       ' Timestamp', 'Flow ID'], dtype=object)
+>>> data2.info()
+<class 'pandas.core.frame.DataFrame'>
+Index: 3119345 entries, 0 to 692702
+Data columns (total 85 columns):
+ #   Column                        Dtype
+---  ------                        -----
+ 0   Flow ID                       object
+ 1    Source IP                    object
+ 2    Source Port                  float64
+ 3    Destination IP               object
+ 4    Destination Port             float64
+ 5    Protocol                     float64
+ 6    Timestamp                    object
+ 7    Flow Duration                float64
+ 8    Total Fwd Packets            float64
+ 9    Total Backward Packets       float64
+ 10  Total Length of Fwd Packets   float64
+ 11   Total Length of Bwd Packets  float64
+ 12   Fwd Packet Length Max        float64
+ 13   Fwd Packet Length Min        float64
+ 14   Fwd Packet Length Mean       float64
+ 15   Fwd Packet Length Std        float64
+ 16  Bwd Packet Length Max         float64
+ 17   Bwd Packet Length Min        float64
+ 18   Bwd Packet Length Mean       float64
+ 19   Bwd Packet Length Std        float64
+ 20  Flow Bytes/s                  float64
+ 21   Flow Packets/s               float64
+ 22   Flow IAT Mean                float64
+ 23   Flow IAT Std                 float64
+ 24   Flow IAT Max                 float64
+ 25   Flow IAT Min                 float64
+ 26  Fwd IAT Total                 float64
+ 27   Fwd IAT Mean                 float64
+ 28   Fwd IAT Std                  float64
+ 29   Fwd IAT Max                  float64
+ 30   Fwd IAT Min                  float64
+ 31  Bwd IAT Total                 float64
+ 32   Bwd IAT Mean                 float64
+ 33   Bwd IAT Std                  float64
+ 34   Bwd IAT Max                  float64
+ 35   Bwd IAT Min                  float64
+ 36  Fwd PSH Flags                 float64
+ 37   Bwd PSH Flags                float64
+ 38   Fwd URG Flags                float64
+ 39   Bwd URG Flags                float64
+ 40   Fwd Header Length            float64
+ 41   Bwd Header Length            float64
+ 42  Fwd Packets/s                 float64
+ 43   Bwd Packets/s                float64
+ 44   Min Packet Length            float64
+ 45   Max Packet Length            float64
+ 46   Packet Length Mean           float64
+ 47   Packet Length Std            float64
+ 48   Packet Length Variance       float64
+ 49  FIN Flag Count                float64
+ 50   SYN Flag Count               float64
+ 51   RST Flag Count               float64
+ 52   PSH Flag Count               float64
+ 53   ACK Flag Count               float64
+ 54   URG Flag Count               float64
+ 55   CWE Flag Count               float64
+ 56   ECE Flag Count               float64
+ 57   Down/Up Ratio                float64
+ 58   Average Packet Size          float64
+ 59   Avg Fwd Segment Size         float64
+ 60   Avg Bwd Segment Size         float64
+ 61   Fwd Header Length.1          float64
+ 62  Fwd Avg Bytes/Bulk            float64
+ 63   Fwd Avg Packets/Bulk         float64
+ 64   Fwd Avg Bulk Rate            float64
+ 65   Bwd Avg Bytes/Bulk           float64
+ 66   Bwd Avg Packets/Bulk         float64
+ 67  Bwd Avg Bulk Rate             float64
+ 68  Subflow Fwd Packets           float64
+ 69   Subflow Fwd Bytes            float64
+ 70   Subflow Bwd Packets          float64
+ 71   Subflow Bwd Bytes            float64
+ 72  Init_Win_bytes_forward        float64
+ 73   Init_Win_bytes_backward      float64
+ 74   act_data_pkt_fwd             float64
+ 75   min_seg_size_forward         float64
+ 76  Active Mean                   float64
+ 77   Active Std                   float64
+ 78   Active Max                   float64
+ 79   Active Min                   float64
+ 80  Idle Mean                     float64
+ 81   Idle Std                     float64
+ 82   Idle Max                     float64
+ 83   Idle Min                     float64
+ 84   Label                        object
+dtypes: float64(80), object(5)
+memory usage: 2.0+ GB
+>>> data1.info()
+<class 'pandas.core.frame.DataFrame'>
+Index: 2830743 entries, 0 to 692702
+Data columns (total 79 columns):
+ #   Column                        Dtype
+---  ------                        -----
+ 0    Destination Port             int64
+ 1    Flow Duration                int64
+ 2    Total Fwd Packets            int64
+ 3    Total Backward Packets       int64
+ 4   Total Length of Fwd Packets   int64
+ 5    Total Length of Bwd Packets  int64
+ 6    Fwd Packet Length Max        int64
+ 7    Fwd Packet Length Min        int64
+ 8    Fwd Packet Length Mean       float64
+ 9    Fwd Packet Length Std        float64
+ 10  Bwd Packet Length Max         int64
+ 11   Bwd Packet Length Min        int64
+ 12   Bwd Packet Length Mean       float64
+ 13   Bwd Packet Length Std        float64
+ 14  Flow Bytes/s                  float64
+ 15   Flow Packets/s               float64
+ 16   Flow IAT Mean                float64
+ 17   Flow IAT Std                 float64
+ 18   Flow IAT Max                 int64
+ 19   Flow IAT Min                 int64
+ 20  Fwd IAT Total                 int64
+ 21   Fwd IAT Mean                 float64
+ 22   Fwd IAT Std                  float64
+ 23   Fwd IAT Max                  int64
+ 24   Fwd IAT Min                  int64
+ 25  Bwd IAT Total                 int64
+ 26   Bwd IAT Mean                 float64
+ 27   Bwd IAT Std                  float64
+ 28   Bwd IAT Max                  int64
+ 29   Bwd IAT Min                  int64
+ 30  Fwd PSH Flags                 int64
+ 31   Bwd PSH Flags                int64
+ 32   Fwd URG Flags                int64
+ 33   Bwd URG Flags                int64
+ 34   Fwd Header Length            int64
+ 35   Bwd Header Length            int64
+ 36  Fwd Packets/s                 float64
+ 37   Bwd Packets/s                float64
+ 38   Min Packet Length            int64
+ 39   Max Packet Length            int64
+ 40   Packet Length Mean           float64
+ 41   Packet Length Std            float64
+ 42   Packet Length Variance       float64
+ 43  FIN Flag Count                int64
+ 44   SYN Flag Count               int64
+ 45   RST Flag Count               int64
+ 46   PSH Flag Count               int64
+ 47   ACK Flag Count               int64
+ 48   URG Flag Count               int64
+ 49   CWE Flag Count               int64
+ 50   ECE Flag Count               int64
+ 51   Down/Up Ratio                int64
+ 52   Average Packet Size          float64
+ 53   Avg Fwd Segment Size         float64
+ 54   Avg Bwd Segment Size         float64
+ 55   Fwd Header Length.1          int64
+ 56  Fwd Avg Bytes/Bulk            int64
+ 57   Fwd Avg Packets/Bulk         int64
+ 58   Fwd Avg Bulk Rate            int64
+ 59   Bwd Avg Bytes/Bulk           int64
+ 60   Bwd Avg Packets/Bulk         int64
+ 61  Bwd Avg Bulk Rate             int64
+ 62  Subflow Fwd Packets           int64
+ 63   Subflow Fwd Bytes            int64
+ 64   Subflow Bwd Packets          int64
+ 65   Subflow Bwd Bytes            int64
+ 66  Init_Win_bytes_forward        int64
+ 67   Init_Win_bytes_backward      int64
+ 68   act_data_pkt_fwd             int64
+ 69   min_seg_size_forward         int64
+ 70  Active Mean                   float64
+ 71   Active Std                   float64
+ 72   Active Max                   int64
+ 73   Active Min                   int64
+ 74  Idle Mean                     float64
+ 75   Idle Std                     float64
+ 76   Idle Max                     int64
+ 77   Idle Min                     int64
+ 78   Label                        object
+dtypes: float64(24), int64(54), object(1)
+memory usage: 1.7+ GB
