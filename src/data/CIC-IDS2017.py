@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
 warnings.simplefilter(action='ignore', category=UserWarning)
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import IncrementalPCA
+
 
 from utils import concat_and_save_csv, features_correction
 
@@ -26,6 +29,21 @@ class CICIDS2017:
         
         self.df = self.load_dataframe(extended=extended)
         self.extended = extended
+
+    def sample(self, p: float = 0.2) -> pd.DataFrame:
+        """
+        Samples (without replacement) a percentage of the data
+
+        Args:
+            p: Percentage to sample. Must be between 0% and 100%
+        """
+
+        assert (0 <= p) and (p <= 1)
+
+        sample_size = int(p * len(self.df))
+        sampled_data = self.df.sample(n = sample_size, replace = False, random_state = 0)
+        
+        return sampled_data
 
     def load_dataframe(self, extended: bool = False) -> pd.DataFrame:
         """
@@ -80,9 +98,9 @@ class CICIDS2017:
         df['Flow_Bytes/s'].fillna(med_flow_bytes, inplace = True)
         df['Flow_Packets/s'].fillna(med_flow_packets, inplace = True)
 
-    def analysis(self, verbose: int = 0):
+    def analysis(self, verbose: int = 1) -> None:
         """
-        Method for executing an analysis over the CIC-IDS20217 dataset
+        Method for executing an analysis over the CIC-IDS20217 dataset and saving results on memory
 
         Args:
             verbose: An indicator of how much information to display while executing
@@ -91,7 +109,7 @@ class CICIDS2017:
         save_directory = os.path.join(self.ANALYSIS_PATH, self.EXTENDED_DATASET_FOLDER if self.extended else self.DATASET_FOLDER)
         os.makedirs(save_directory, exist_ok=True)
 
-        if verbose > 0: print(f"Starting CIC-IDS2017 {'(extended)' if self.extended else ''} analysis...")
+        if verbose > 0: print(f"\n---Starting CIC-IDS2017 {'(extended)' if self.extended else ''} analysis---")
 
         # CORRELATION MATRIX
         if verbose > 1: print("Correlation matrix...", end="")
@@ -127,9 +145,92 @@ class CICIDS2017:
         if verbose > 1: print("DONE")
 
 
+        # BOXPLOT OF FEATURES FOR EACH ATTACK / FIRMS FOR EACH ATTACK
+        if verbose > 1: print("Distribution of attacks...", end="")
+
+        os.makedirs(os.path.join(save_directory, "attacks_boxplots"), exist_ok=True)
+        for attack_type in self.df['Label'].unique():
+
+            attack_data = self.df[self.df['Label'] == attack_type]
+            plt.figure(figsize=(20, 20))
+            sns.boxplot(data = attack_data.drop(columns = ['Label']), orient = 'h')
+            plt.title(f'Boxplot of Features for Attack Type: {attack_type}')
+            plt.xlabel('Feature Value')
+
+            if verbose > 2:
+                plt.show()
+            
+            plt.savefig(os.path.join(save_directory, "attacks_boxplots", f"{str(attack_type).strip().replace(" ", "_")}.png"))
+        
+        if verbose > 1: print("DONE")
+
+        if verbose > 0: print(f"---DONE---")
+
+    def preprocessing(self, verbose: int = 1) -> None:
+        """
+        Performs data preprocessing for the dataset
+        
+        Args:
+            verbose: An indicator of how much information to display while executing
+        """
+
+        if verbose > 0: print(f"\n---Starting CIC-IDS2017 {'(extended)' if self.extended else ''} preprocessing---")
+
+        # QUANTIZATION
+        if verbose > 1: print("Quantization...", end="")
+
+        for col in self.df.columns:
+            col_type = self.df[col].dtype
+            if col_type != object:
+                c_min = self.df[col].min()
+                c_max = self.df[col].max()
+                # Downcasting float64 to float32
+                if str(col_type).find('float') >= 0 and c_min > np.finfo(np.float32).min and c_max < np.finfo(np.float32).max:
+                    data[col] = self.df[col].astype(np.float32)
+
+                # Downcasting int64 to int32
+                elif str(col_type).find('int') >= 0 and c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
+                    data[col] = self.df[col].astype(np.int32)
+
+        if verbose > 1: print("DONE")
+
+        # DROPPING COLUMNS WITH ONLY ONE UNIQUE VALUE
+        if verbose > 1: print("Droping columns with one value...", end="")
+
+        num_unique = self.df.nunique()
+        one_variable = num_unique[num_unique == 1]
+        not_one_variable = num_unique[num_unique > 1].index
+
+        dropped_cols = one_variable.index
+        self.df = self.df[not_one_variable]
+
+        if verbose > 1: print("DONE")
+
+        # PCA
+        if verbose > 1: print("PCA...", end="")
+
+        features = self.df.drop('Label', axis = 1)
+        attacks = self.df['Label']
+
+        scaler = StandardScaler()
+        scaled_features = scaler.fit_transform(features)
+
+        size = len(features.columns) // 2
+        ipca = IncrementalPCA(n_components = size, batch_size = 500)
+        for batch in np.array_split(scaled_features, len(features) // 500):
+            ipca.partial_fit(batch)
+
+        # print(f'information retained: {sum(ipca.explained_variance_ratio_):.2%}')
+        transformed_features = ipca.transform(scaled_features)
+        self.df = pd.DataFrame(transformed_features, columns = [f'PC{i+1}' for i in range(size)])
+        self.df['Label'] = attacks.values
+
+        if verbose > 1: print("DONE")
 
 
         if verbose > 0: print(f"---DONE---")
+
+
 
 if __name__ == "__main__":
 
