@@ -2,12 +2,6 @@
 
 ## DATA
 
-
-- Base dataset -> Base: Tabular/Image/... datset -> Specific
-- Datasets
-
-- Interface for common loading between tabular datasets
-
 ### CIC-IDS2017
 
 - Dealing with missing values and infinite values. Needs solving
@@ -17,7 +11,7 @@
 - Data analysis
     - Outliers analysis?
 
-- Getter para el dataframe: Que no se carge hasta que se solicite. Que _df inicie en None
+- Extended dataset? Avoided bacause it needs futher processing before applying PCA
 
 ## MODELS
 
