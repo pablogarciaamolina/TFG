@@ -39,3 +39,19 @@ def concat_and_save_csv(path: str, name: str, encoding: str = "utf-8", save_in_p
         return df
     else:
         del df
+
+def sample(data: pd.DataFrame, p: float = 0.2) -> pd.DataFrame:
+    """
+    Samples (without replacement) a percentage of the data in a pandas DataFrame
+
+    Args:
+        data: DataFrame to sample
+        p: Percentage to sample. Must be between 0% and 100%
+    """
+
+    assert (0 <= p) and (p <= 1)
+
+    sample_size = int(p * len(data))
+    sampled_data = data.sample(n = sample_size, replace = False, random_state = 0)
+
+    return sampled_data
