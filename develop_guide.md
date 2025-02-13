@@ -13,6 +13,8 @@
 
 - Extended dataset? Avoided bacause it needs futher processing before applying PCA
 
+- Check if new data pipeline works (analysis not testes)
+
 ## MODELS
 
 ## PIPELINE ??
