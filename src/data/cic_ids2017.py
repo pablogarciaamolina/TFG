@@ -9,9 +9,9 @@ from sklearn.decomposition import IncrementalPCA
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from .config import DATA_DIR, CIC_IDS2017_URL, EXTENDED_CIC_IDS2017_URL, ANALYSIS_PATH
-from .base import TabularDataset
-from .utils import concat_and_save_csv, features_correction
+from config import DATA_DIR, CIC_IDS2017_URL, EXTENDED_CIC_IDS2017_URL, ANALYSIS_PATH
+from base import TabularDataset
+from utils import concat_and_save_csv, features_correction
 
 class CICIDS2017(TabularDataset):
     """
@@ -19,7 +19,7 @@ class CICIDS2017(TabularDataset):
     """
 
     # extended_dataset_folder = os.path.join("TrafficLabelling_", "TrafficLabelling ")
-    dataset_folder = os.path.join("MachineLearningCVE", "MachineLearningCVE")
+    dataset_folder = "MachineLearningCVE"
 
     def __init__(self):
         """
@@ -51,10 +51,14 @@ class CICIDS2017(TabularDataset):
                 for chunk in response.iter_content(chunk_size=1024):
                     f.write(chunk)
             
-            # Extract file
-            logging.info(f"Extracting {zip_path}...")
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(self.data_dir)
+                for member in zip_ref.namelist():
+                    filename = os.path.basename(member)
+                    if filename:
+                        with zip_ref.open(member) as source:  # <-- Properly using 'with' here
+                            target_path = os.path.join(self.data_dir, filename)
+                            with open(target_path, "wb") as target:  # <-- And here
+                                target.write(source.read())
             os.remove(zip_path)
         else:
             logging.error(f"Failed to download dataset from {self.url}.")
@@ -199,3 +203,9 @@ class CICIDS2017(TabularDataset):
             plt.savefig(os.path.join(save_directory, "attacks_boxplots", f"{str(attack_type).strip().replace(' ', '_')}.png"))
         
         logging.info(f"...analysis DONE")
+
+if __name__ == "__main__":
+
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    dataset = CICIDS2017()
+    dataset.load()
