@@ -9,9 +9,9 @@ from sklearn.decomposition import IncrementalPCA
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from config import DATA_DIR, CIC_IDS2017_URL, EXTENDED_CIC_IDS2017_URL, ANALYSIS_PATH
-from base import TabularDataset
-from utils import concat_and_save_csv, features_correction
+from .config import DATA_DIR, CIC_IDS2017_URL, EXTENDED_CIC_IDS2017_URL, ANALYSIS_PATH
+from .base import TabularDataset
+from .utils import concat_and_save_csv, features_correction
 
 class CICIDS2017(TabularDataset):
     """
