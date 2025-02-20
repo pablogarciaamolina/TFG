@@ -24,6 +24,7 @@ TFG/
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── ml.py
+│   │   ├── tabnet.py
 ├── .gitgnore
 ├── README.md
 ├── develop_guide.md
