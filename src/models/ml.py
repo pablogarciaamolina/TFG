@@ -1,13 +1,10 @@
 import logging
 import joblib
-from sklearn.base import ClassifierMixin
+from sklearn.base import BaseEstimator
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class MLClassifier:
     """
@@ -23,8 +20,8 @@ class MLClassifier:
             **kwargs: Additional parameters to pass to the model.
         """
 
-        if not issubclass(model_class, ClassifierMixin):
-            raise ValueError("Provided model_class must be a subclass of ClassifierMixin")
+        if not issubclass(model_class, BaseEstimator):
+            raise ValueError("Provided model_class must be a subclass of BaseEstimator")
         
         self.model = model_class(**kwargs)
         self.cross_val_scores = None
