@@ -24,11 +24,12 @@
 - Check ML models
 - Check if Label encoding can be added to the data processing. Maybe utils?
 
-## PIPELINE ??
-Contains code to integrate data and models, and others ? 
+## PIPELINE
+
+- Implement abstraction for training Tabnet over a dataset
+- Implement pipeline for using CLI to clasify a datset using Mistral and Gemini
 
 ## IMPLEMENTATION / Notebooks?
 
 - Preparing data for models
     - Binarizing
-    - Splitting into train and test, and balancing classes 
