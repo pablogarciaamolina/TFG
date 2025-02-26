@@ -55,3 +55,28 @@ def sample(data: pd.DataFrame, p: float = 0.2) -> pd.DataFrame:
     sampled_data = data.sample(n = sample_size, replace = False, random_state = 0)
 
     return sampled_data
+
+def balanced_sample(df: pd.DataFrame, category_col: str, n_per_class: int) -> pd.DataFrame:
+    """
+    Draws a balanced sample from a DataFrame based on a categorical variable.
+    
+    Args:
+        df: DataFrame
+        category_col: Column name of the categorical variable
+        n_per_class: Number of samples per category
+    Return:
+        A balanced DataFrame sample
+    """
+    return df.groupby(category_col).apply(lambda x: x.sample(n=min(len(x), n_per_class))).reset_index(drop=True)
+
+def jsonize_rows(data: pd.DataFrame) -> list[str]:
+    """
+    Transforms input datatframe into json format row by row
+
+    Args:
+        data: Dataframe containing the data
+    """
+
+    jsonized_rows = [row.to_json() for _, row in data.iterrows()]
+
+    return jsonized_rows
