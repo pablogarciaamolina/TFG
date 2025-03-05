@@ -1,6 +1,9 @@
 import os
 import glob
 import pandas as pd
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
+
 
 def features_correction(data: pd.DataFrame) -> None:
     """
@@ -52,7 +55,7 @@ def sample(data: pd.DataFrame, p: float = 0.2) -> pd.DataFrame:
     assert (0 <= p) and (p <= 1)
 
     sample_size = int(p * len(data))
-    sampled_data = data.sample(n = sample_size, replace = False, random_state = 0)
+    sampled_data = data.sample(n = sample_size, replace = False, random_state = 0).reset_index(drop=True)
 
     return sampled_data
 
@@ -80,3 +83,22 @@ def jsonize_rows(data: pd.DataFrame) -> list[str]:
     jsonized_rows = [row.to_json() for _, row in data.iterrows()]
 
     return jsonized_rows
+
+def encode_labels(data: pd.DataFrame, label_col: str) -> tuple[np.ndarray]:
+    """
+    Encodes categorical labels with a label encoder
+
+    Args:
+        data: Pandas Dataframe containing the data
+        label_col: Name of the column containing the categorical labels
+
+    Returns:
+        Data separated into features and encoded labels
+    """
+
+    x = data.drop(columns=[label_col]).values
+    y = data[label_col].values
+    y = LabelEncoder().fit_transform(y)
+
+    return x, y
+
