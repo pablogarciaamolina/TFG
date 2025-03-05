@@ -5,6 +5,7 @@
 ### CIC-IDS2017
 
 - ADD A WAY TO USE THE DATA WITHOUT PCA TO TRY AND SEE WHICH IS BETTER
+- Cleaning the names of the label classes
 
 ---
 
