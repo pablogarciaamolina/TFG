@@ -16,3 +16,23 @@ TABNET_TRAINING_PARAMS = {
 
 MISTRAL_API_KEY = os.environ["MISTRAL_API_KEY"]
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+
+LOGISTIC_REGRESSION_CONFIG = {
+    "multi_class": "multinomial"
+}
+
+LINEAR_SVC_CONFIG = {
+    ...
+}
+
+RANDOM_FOREST_CONFIG = {
+    ...
+}
+
+KNEIGHBORS_CONFIG = {
+    ...
+}
+
+DECISION_TREE_CONFIG = {
+    ...
+}

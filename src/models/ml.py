@@ -1,10 +1,15 @@
+import numpy as np
 import logging
 import joblib
 from sklearn.base import BaseEstimator
 from sklearn.model_selection import cross_val_score, StratifiedKFold
+
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from .config import LOGISTIC_REGRESSION_CONFIG, LINEAR_SVC_CONFIG, RANDOM_FOREST_CONFIG, KNEIGHBORS_CONFIG, DECISION_TREE_CONFIG
 
 class MLClassifier:
     """
@@ -47,6 +52,21 @@ class MLClassifier:
         if verbose > 0:
             logging.info(f'Cross-validation scores: {self.cross_val_scores}')
             logging.info(f'Mean cross-validation score: {self.cross_val_scores.mean():.4f}')
+
+    def predict(self, X) -> np.ndarray:
+        """
+        Method for predicting samples with the trained model
+    
+        Args:
+            X: The data matrix for which we want to get the predictions.
+
+        Returns:
+            ndarray of shape (n_samples,). Vector containing the class labels for each sample.
+        """
+
+        assert self.trained, "Model not trained yet"
+
+        return self.model.predict(X)
     
     def save_model(self, filepath):
         """
@@ -76,3 +96,28 @@ class MLClassifier:
         model = joblib.load(filepath)
         logging.info(f'Model loaded from {filepath}')
         return model
+    
+class PreConfigured_LogisticRegression(MLClassifier):
+
+    def __init__(self):
+        super().__init__(LogisticRegression, **LOGISTIC_REGRESSION_CONFIG)
+
+class PreConfigured_LinearSVC(MLClassifier):
+
+    def __init__(self):
+        super().__init__(LinearSVC, **LINEAR_SVC_CONFIG)
+
+class PreConfigured_RandomForest(MLClassifier):
+
+    def __init__(self):
+        super().__init__(RandomForestClassifier, **RANDOM_FOREST_CONFIG)
+
+class PreConfigured_KNeighbors(MLClassifier):
+
+    def __init__(self):
+        super().__init__(KNeighborsClassifier, **KNEIGHBORS_CONFIG)
+
+class PreConfigured_DecisionTree(MLClassifier):
+
+    def __init__(self):
+        super().__init__(DecisionTreeClassifier, **DECISION_TREE_CONFIG)
