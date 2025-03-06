@@ -2,12 +2,10 @@
 
 ## DATA
 
+- Better handling for the different options of data status (avoid redowloading if its already dowloaded, ...)
+
 ### CIC-IDS2017
 
-- ADD A WAY TO USE THE DATA WITHOUT PCA TO TRY AND SEE WHICH IS BETTER
-- Cleaning the names of the label classes
-
----
 
 - Dealing with missing values and infinite values. Needs solving
 - Visualization of missing values
