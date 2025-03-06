@@ -82,7 +82,7 @@ class MLClassifier:
             raise RuntimeError("Model must be trained before saving.")
         
         name = name if name else self.__class__.__name__ + f"{time.time()}"
-        filepath = os.path.join(SAVING_PATH, "ml", name)
+        filepath = os.path.join(SAVING_PATH, "ml", name + ".zip")
 
         os.makedirs(os.path.dirname(filepath), exist_ok=True)        
         joblib.dump(self.model, filepath)
@@ -100,7 +100,7 @@ class MLClassifier:
             Loaded model instance.
         """
         
-        filepath = os.path.join(SAVING_PATH, "ml", name)
+        filepath = os.path.join(SAVING_PATH, "ml", name + ".zip")
         if not os.path.exists(filepath):
             raise FileNotFoundError(f"Model file '{filepath}' not found.")
         
