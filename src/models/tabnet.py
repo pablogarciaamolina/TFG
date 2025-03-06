@@ -96,7 +96,7 @@ class TabNetModel:
         Saves the model on memory following the saving path and the name for the model
         """
 
-        name = self.name if self.name else f"tabnet_{time.time()}"
+        name = name if name else f"tabnet_{time.time()}"
         path = os.path.join(TABNET_SAVING_PATH, name)
 
         self.model.save_model(path)
