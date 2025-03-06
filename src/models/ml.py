@@ -84,6 +84,7 @@ class MLClassifier:
         name = name if name else self.__class__.__name__ + f"{time.time()}"
         filepath = os.path.join(SAVING_PATH, "ml", name)
 
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)        
         joblib.dump(self.model, filepath)
         logging.info(f'Model saved to {filepath}')
 
@@ -100,6 +101,9 @@ class MLClassifier:
         """
         
         filepath = os.path.join(SAVING_PATH, "ml", name)
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"Model file '{filepath}' not found.")
+        
         model = joblib.load(filepath)
         logging.info(f'Model loaded from {filepath}')
         return model
