@@ -8,7 +8,7 @@ from pytorch_tabnet.tab_model import TabNetClassifier
 from pytorch_tabnet.pretraining import TabNetPretrainer
 from pytorch_tabnet.metrics import accuracy_score, roc_auc_score
 
-from .config import TABNET_PRETRAINING_PARAMS, TABNET_TRAINING_PARAMS, TABNET_SAVING_PATH
+from .config import TABNET_PRETRAINER_CONFIG, TABNET_CONFIG, TABNET_PRETRAINING_PARAMS, TABNET_TRAINING_PARAMS, TABNET_SAVING_PATH
 
 
 
@@ -23,8 +23,8 @@ class TabNetModel:
             name: Name for the model
         """
         
-        self.pretrainer = TabNetPretrainer() if pretrain else None
-        self.model = TabNetClassifier()
+        self.pretrainer = TabNetPretrainer(**TABNET_PRETRAINER_CONFIG) if pretrain else None
+        self.model = TabNetClassifier(**TABNET_CONFIG)
 
 
     def fit(self, X_train: np.ndarray, y_train: np.ndarray, X_val: np.ndarray, y_val: np.ndarray) -> tuple[float, float]:
