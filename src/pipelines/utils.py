@@ -32,7 +32,7 @@ def clasiffy_with_llm(
     ...
 
 
-def train_and_evaluate(
+def train_and_evaluate_ml_model(
     model,
     model_name: str,
     x_train,
@@ -42,7 +42,7 @@ def train_and_evaluate(
     cv: int = 10
 ) -> dict:
     """
-    Pipeline for training and evaluating a model
+    Pipeline for training and evaluating a ML model
 
     Args:
         model: ML Model
@@ -81,6 +81,33 @@ def train_and_evaluate(
         "accuracy": accuracy,
         "metrics_report": fig
     }
+
+def train_and_evaluate_tabnet_model(
+    model,
+    model_name: str,
+    x_train,
+    y_train,
+    x_test,
+    y_test,
+) -> dict:
+    """
+    Pipeline for training and evaluating a ML model
+
+    Args:
+        model: Model
+        model_name: Name of the model
+        x_train: Training features
+        y_train: Training labels
+        x_test: Testing features
+        y_test: Testing labels
+
+    Returns:
+        A dictionary containing the metrics and a figure with the report
+    """
+    
+    train_acc, val_acc = model.fit(x_train, y_train, x_test, y_test)
+
+    ...
     
 
 
