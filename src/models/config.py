@@ -1,6 +1,6 @@
 import os
 
-SAVING_PATH = os.path.join("models", "tabnet")
+SAVING_PATH = os.path.join("models")
 
 TABNET_PRETRAINING_PARAMS = {
     "max_epochs": 100,

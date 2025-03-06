@@ -1,3 +1,5 @@
+import os
+import time
 import numpy as np
 import logging
 import joblib
@@ -9,7 +11,7 @@ from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from .config import LOGISTIC_REGRESSION_CONFIG, LINEAR_SVC_CONFIG, RANDOM_FOREST_CONFIG, KNEIGHBORS_CONFIG, DECISION_TREE_CONFIG
+from .config import SAVING_PATH, LOGISTIC_REGRESSION_CONFIG, LINEAR_SVC_CONFIG, RANDOM_FOREST_CONFIG, KNEIGHBORS_CONFIG, DECISION_TREE_CONFIG
 
 class MLClassifier:
     """
@@ -78,6 +80,7 @@ class MLClassifier:
 
         if not self.trained:
             raise RuntimeError("Model must be trained before saving.")
+        filepath = os.path.join(SAVING_PATH, "ml", self.__class__.__name__ + f"{time.time()}")
         joblib.dump(self.model, filepath)
         logging.info(f'Model saved to {filepath}')
 

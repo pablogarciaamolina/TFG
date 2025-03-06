@@ -98,7 +98,7 @@ class TabNetModel:
         """
 
         name = self.name if self.name else f"tabnet_{time.time()}"
-        path = os.path.join(SAVING_PATH, name)
+        path = os.path.join(SAVING_PATH, "tabnet", name)
 
         self.model.save_model(path)
 
