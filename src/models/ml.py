@@ -11,7 +11,7 @@ from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from .config import SAVING_PATH, LOGISTIC_REGRESSION_CONFIG, LINEAR_SVC_CONFIG, RANDOM_FOREST_CONFIG, KNEIGHBORS_CONFIG, DECISION_TREE_CONFIG
+from .config import ML_SAVING_PATH, LOGISTIC_REGRESSION_CONFIG, LINEAR_SVC_CONFIG, RANDOM_FOREST_CONFIG, KNEIGHBORS_CONFIG, DECISION_TREE_CONFIG
 
 class MLClassifier:
     """
@@ -82,7 +82,7 @@ class MLClassifier:
             raise RuntimeError("Model must be trained before saving.")
         
         name = name if name else self.__class__.__name__ + f"{time.time()}"
-        filepath = os.path.join(SAVING_PATH, "ml", name + ".zip")
+        filepath = os.path.join(ML_SAVING_PATH, name + ".zip")
 
         os.makedirs(os.path.dirname(filepath), exist_ok=True)        
         joblib.dump(self.model, filepath)
@@ -100,7 +100,7 @@ class MLClassifier:
             Loaded model instance.
         """
         
-        filepath = os.path.join(SAVING_PATH, "ml", name + ".zip")
+        filepath = os.path.join(ML_SAVING_PATH, name + ".zip")
         if not os.path.exists(filepath):
             raise FileNotFoundError(f"Model file '{filepath}' not found.")
         

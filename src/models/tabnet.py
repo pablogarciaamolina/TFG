@@ -8,7 +8,7 @@ from pytorch_tabnet.tab_model import TabNetClassifier
 from pytorch_tabnet.pretraining import TabNetPretrainer
 from pytorch_tabnet.metrics import accuracy_score, roc_auc_score
 
-from .config import TABNET_PRETRAINING_PARAMS, TABNET_TRAINING_PARAMS, SAVING_PATH
+from .config import TABNET_PRETRAINING_PARAMS, TABNET_TRAINING_PARAMS, TABNET_SAVING_PATH
 
 
 
@@ -97,7 +97,7 @@ class TabNetModel:
         """
 
         name = self.name if self.name else f"tabnet_{time.time()}"
-        path = os.path.join(SAVING_PATH, "tabnet", name)
+        path = os.path.join(TABNET_SAVING_PATH, name)
 
         self.model.save_model(path)
 
@@ -106,7 +106,7 @@ class TabNetModel:
         Loads the model from memory using its name
         """
 
-        path = os.path.join(SAVING_PATH, name + ".zip")
+        path = os.path.join(TABNET_SAVING_PATH, name + ".zip")
         self.model.load_model(path)
 
     def evaluate(self, X_test, y_test) -> tuple[float, float]:
