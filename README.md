@@ -29,11 +29,10 @@ TFG/
 │   ├── pipelines/
 │   │   ├── __init__.py
 │   │   ├── utils.py
-├── notebooks/
-│   ├── ...
 ├── .gitgnore
 ├── README.md
 ├── develop_guide.md
+├── .*.ipynb (example notebooks)
 ```
 
 

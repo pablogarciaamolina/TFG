@@ -132,6 +132,5 @@ cython_debug/
 #--------------------------
 
 *.csv
-*.ipynb
 models/*
-!notebooks/*.ipynb
+local/*

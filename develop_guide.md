@@ -22,12 +22,10 @@
 
 ## MODELS
 
-- Check ML models
-- Check if Label encoding can be added to the data processing. Maybe utils?
+- Implementation of a base class for all classification models, so adding new model is easier and they all share a common api
 
 ## PIPELINE
 
-- Implement abstraction for training Tabnet over a dataset
 - Implement pipeline for using CLI to clasify a datset using Mistral and Gemini
 
 ## IMPLEMENTATION / Notebooks?

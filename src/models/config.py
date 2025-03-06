@@ -3,14 +3,14 @@ import os
 SAVING_PATH = os.path.join("models", "tabnet")
 
 TABNET_PRETRAINING_PARAMS = {
-    "max_epochs": 1,
+    "max_epochs": 20,
     "batch_size": 64
 }
 
 TABNET_TRAINING_PARAMS = {
     "eval_name": ['val'],
     "eval_metric": ["accuracy"],
-    "max_epochs": 1,
+    "max_epochs": 50,
     "batch_size": 64,
 }
 
