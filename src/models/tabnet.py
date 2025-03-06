@@ -43,6 +43,7 @@ class TabNetModel:
 
         # Pretraining
         logging.info("Pretraining for TabNet...")
+        print(TABNET_PRETRAINING_PARAMS)
         self.pretrainer.fit(
             X_train,
             eval_set=[X_val],

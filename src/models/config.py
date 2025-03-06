@@ -15,8 +15,6 @@ TABNET_PRETRAINER_CONFIG = {
     "optimizer_fn": torch.optim.AdamW,
     "optimizer_params": {"lr": 2e-2},
     "mask_type": "entmax",
-    "virtual_batch_size": 128,
-    "num_workers": 4
 }
 TABNET_PRETRAINING_PARAMS = {
     "max_epochs": 100,
@@ -37,8 +35,6 @@ TABNET_CONFIG = {
     "scheduler_fn": torch.optim.lr_scheduler.StepLR,
     "scheduler_params": {"step_size": 50, "gamma": 0.9},
     "mask_type": "entmax",
-    "virtual_batch_size": 128,
-    "num_workers": 4
 }
 TABNET_TRAINING_PARAMS = {
     "eval_name": ['val'],
