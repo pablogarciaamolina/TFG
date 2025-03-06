@@ -70,7 +70,7 @@ class MLClassifier:
 
         return self.model.predict(X)
     
-    def save_model(self, name=None):
+    def save_model(self, name: str = None):
         """
         Saves the trained model to the specified file.
 
@@ -88,7 +88,7 @@ class MLClassifier:
         logging.info(f'Model saved to {filepath}')
 
     @staticmethod
-    def load_model(name):
+    def load_model(name: str):
         """
         Loads a saved model from the specified file.
 

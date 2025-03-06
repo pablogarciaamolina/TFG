@@ -14,7 +14,7 @@ from .config import TABNET_PRETRAINING_PARAMS, TABNET_TRAINING_PARAMS, SAVING_PA
 
 class TabNetModel:
 
-    def __init__(self, pretrain: bool = True, name: str = None) -> None:
+    def __init__(self, pretrain: bool = True) -> None:
         """
         Constructor for the class
 
@@ -23,7 +23,6 @@ class TabNetModel:
             name: Name for the model
         """
         
-        self.name = name
         self.pretrainer = TabNetPretrainer() if pretrain else None
         self.model = TabNetClassifier()
 
@@ -92,7 +91,7 @@ class TabNetModel:
         # plt.plot(self.model.history['val'])
         plt.plot(self.model.history['lr'])
 
-    def save(self) -> None:
+    def save(self, name: str = None) -> None:
         """
         Saves the model on memory following the saving path and the name for the model
         """
@@ -102,12 +101,12 @@ class TabNetModel:
 
         self.model.save_model(path)
 
-    def load(self) -> None:
+    def load(self, name: str) -> None:
         """
         Loads the model from memory using its name
         """
 
-        path = os.path.join(SAVING_PATH, self.name + ".zip")
+        path = os.path.join(SAVING_PATH, name + ".zip")
         self.model.load_model(path)
 
     def evaluate(self, X_test, y_test) -> tuple[float, float]:
