@@ -65,6 +65,34 @@ def train_and_evaluate(
     elif isinstance(model, MLClassifier):
         model.fit(x_train, y_train, cv=cv, verbose=1)
 
+    results_dict = evaluate(
+        model,
+        model_name,
+        x_test,
+        y_test
+    )
+
+    return results_dict
+
+def evaluate(
+    model,
+    model_name: str,
+    x_test,
+    y_test
+) -> dict:
+    """
+    Method for evaluating a model
+
+    Args:
+        model: The model instance (MLClassifier or TabNetModel)
+        model_name: Name of the model
+        x_test: Testing features
+        y_test: Testing labels
+
+    Returns:
+        A dictionary containing the metrics and a figure with the report.
+    """
+
     # Predictions
     pred = model.predict(x_test)
 
