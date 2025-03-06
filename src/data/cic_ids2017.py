@@ -177,7 +177,9 @@ class CICIDS2017(TabularDataset):
             logging.info("PCA complete.")
 
         if self.default_config["classes_mapping"]:
-            self.data['Label'].map(CLASSES_MAPPING)
+
+            self.data["Label"] = self.data['Label'].map(CLASSES_MAPPING)
+            logging.info("Classes mapping complete.")
 
         logging.info("...preprocessing DONE")
 

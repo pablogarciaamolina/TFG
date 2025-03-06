@@ -26,7 +26,7 @@ def category_column_ascii_correction(data: pd.DataFrame, col_name: str) -> None:
         data: DataFrame
     """
 
-    data['Label'] = data['Label'].apply(lambda x: re.sub(r'[^\x00-\x7F]+', '', x))
+    data[col_name] = data[col_name].apply(lambda x: re.sub(r'[^\x00-\x7F]+', '', str(x)))
 
 
 def concat_and_save_csv(path: str, name: str, encoding: str = "utf-8", save_in_path: bool = False, sep: str = ",", return_df: bool = False) -> pd.DataFrame | None:
