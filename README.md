@@ -25,6 +25,12 @@ TFG/
 │   │   ├── __init__.py
 │   │   ├── ml.py
 │   │   ├── tabnet.py
+│   │   ├── lmm_api.py
+│   ├── pipelines/
+│   │   ├── __init__.py
+│   │   ├── utils.py
+├── notebooks/
+│   ├── ...
 ├── .gitgnore
 ├── README.md
 ├── develop_guide.md
