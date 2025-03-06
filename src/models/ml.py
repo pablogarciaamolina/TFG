@@ -106,6 +106,7 @@ class MLClassifier:
         
         model = joblib.load(filepath)
         logging.info(f'Model loaded from {filepath}')
+        
         return model
     
 class PreConfigured_LogisticRegression(MLClassifier):
