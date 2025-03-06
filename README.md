@@ -36,3 +36,42 @@ TFG/
 ├── develop_guide.md
 ```
 
+
+## CODE - Use and Specs
+
+### DATA
+
+...
+
+### MODELS
+
+...
+
+#### Configurations
+
+The models include a predifinable configuration, modifiable via the configuration file.
+
+##### TabNet
+
+``TABNET_PRETRAINING_PARAMS``
+- max_epochs: Maximum pretraining epochs
+- batch_size: Batch size. Note that if the batch size is higher than the amount of data samples provided (both training or validation) an error will be raised.
+
+``TABNET_TRAINING_PARAMS``
+- eval_name: Evaluation name
+- eval_metric: Evaluation metric
+- max_epochs: Maximum number of training epochs
+- batch_size: Batch size. Note that if the batch size is higher than the amount of data samples provided (both training or validation) an error will be raised.
+
+##### ML Models
+
+...
+
+##### LLMs
+
+
+...
+
+### PIPELINES
+
+...
