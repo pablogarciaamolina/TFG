@@ -70,32 +70,36 @@ class MLClassifier:
 
         return self.model.predict(X)
     
-    def save_model(self, filepath):
+    def save_model(self, name=None):
         """
         Saves the trained model to the specified file.
 
         Args:
-            filepath: Path where the model should be saved.
+            name: Name under which the model should be saved.
         """
 
         if not self.trained:
             raise RuntimeError("Model must be trained before saving.")
-        filepath = os.path.join(SAVING_PATH, "ml", self.__class__.__name__ + f"{time.time()}")
+        
+        name = name if name else self.__class__.__name__ + f"{time.time()}"
+        filepath = os.path.join(SAVING_PATH, "ml", name)
+
         joblib.dump(self.model, filepath)
         logging.info(f'Model saved to {filepath}')
 
     @staticmethod
-    def load_model(filepath):
+    def load_model(name):
         """
         Loads a saved model from the specified file.
 
         Args:
-            filepath: Path to the saved model file.
+            name: Name of the saved model file.
 
         Returns:
             Loaded model instance.
         """
         
+        filepath = os.path.join(SAVING_PATH, "ml", name)
         model = joblib.load(filepath)
         logging.info(f'Model loaded from {filepath}')
         return model
