@@ -6,6 +6,9 @@
 
 ### CIC-IDS2017
 
+- Problem: If the dataset is already loaded with a configuration, loading another with a different configuration (without deleting the previous) will end in an error, since it tries to concat also the data in the already processed on (previous configuration)
+
+--------------
 
 - Dealing with missing values and infinite values. Needs solving
 - Visualization of missing values
