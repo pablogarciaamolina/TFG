@@ -88,26 +88,21 @@ class MLClassifier:
         joblib.dump(self.model, filepath)
         logging.info(f'Model saved to {filepath}')
 
-    @staticmethod
-    def load_model(name: str):
+    def load_model(self, name: str) -> None:
         """
-        Loads a saved model from the specified file.
+        Loads a saved model from the specified file. Stores in the class.
 
         Args:
             name: Name of the saved model file.
-
-        Returns:
-            Loaded model instance.
         """
         
         filepath = os.path.join(ML_SAVING_PATH, name + ".zip")
         if not os.path.exists(filepath):
             raise FileNotFoundError(f"Model file '{filepath}' not found.")
         
-        model = joblib.load(filepath)
+        self.model = joblib.load(filepath)
         logging.info(f'Model loaded from {filepath}')
         
-        return model
     
 class PreConfigured_LogisticRegression(MLClassifier):
 
