@@ -2,6 +2,8 @@ import os
 import glob
 import pandas as pd
 import numpy as np
+import unicodedata
+import re
 from sklearn.preprocessing import LabelEncoder
 
 
@@ -15,6 +17,16 @@ def features_correction(data: pd.DataFrame) -> None:
 
     new_col_names = {col: col.strip().replace(" ", "_") for col in data.columns}
     data.rename(columns=new_col_names, inplace=True)
+
+def category_column_ascii_correction(data: pd.DataFrame, col_name: str) -> None:
+    """
+    Inplace function for correcting the categories in a column of a DataFrame, encoding them to ascii.
+
+    Args:
+        data: DataFrame
+    """
+
+    data['Label'] = data['Label'].apply(lambda x: re.sub(r'[^\x00-\x7F]+', '', x))
 
 
 def concat_and_save_csv(path: str, name: str, encoding: str = "utf-8", save_in_path: bool = False, sep: str = ",", return_df: bool = False) -> pd.DataFrame | None:

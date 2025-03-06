@@ -9,9 +9,9 @@ from sklearn.decomposition import IncrementalPCA
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from .config import DATA_DIR, CIC_IDS2017_URL, EXTENDED_CIC_IDS2017_URL, ANALYSIS_PATH
+from .config import DATA_DIR, CIC_IDS2017_URL, EXTENDED_CIC_IDS2017_URL, ANALYSIS_PATH, CICIDS2017_DEFAULT_CONFIG, CLASSES_MAPPING
 from .base import TabularDataset
-from .utils import concat_and_save_csv, features_correction
+from .utils import concat_and_save_csv, features_correction, category_column_ascii_correction
 
 class CICIDS2017(TabularDataset):
     """
@@ -21,17 +21,31 @@ class CICIDS2017(TabularDataset):
     # extended_dataset_folder = os.path.join("TrafficLabelling_", "TrafficLabelling ")
     dataset_folder = "MachineLearningCVE"
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """
         Args:
             extended (bool): If True, load the extended dataset (TrafficLabelling_);
                              otherwise, load the normal dataset (MachineLearningCVE).
         """
+
+        # Config
+        self.default_config = CICIDS2017_DEFAULT_CONFIG
+        self.default_config.update(kwargs)
+
+        # Routes
         self.dataset_folder = self.dataset_folder
         data_dir = os.path.abspath(os.path.join(DATA_DIR, "CIC-IDS2017", self.dataset_folder))
         url = CIC_IDS2017_URL
-        super().__init__(data_dir, "dataset.csv", url)
+
+        # Super
+        name = self._get_id()
+        super().__init__(data_dir, f"{name}.csv", url)
         self.extended = False
+
+    def _get_id(self) -> str:
+
+        sorted_values = sorted(self.default_config.items())
+        return '_'.join([f"{key}({value})" for key, value in sorted_values])
 
     def _download(self) -> None:
         """
@@ -55,9 +69,9 @@ class CICIDS2017(TabularDataset):
                 for member in zip_ref.namelist():
                     filename = os.path.basename(member)
                     if filename:
-                        with zip_ref.open(member) as source:  # <-- Properly using 'with' here
+                        with zip_ref.open(member) as source:
                             target_path = os.path.join(self.data_dir, filename)
-                            with open(target_path, "wb") as target:  # <-- And here
+                            with open(target_path, "wb") as target:
                                 target.write(source.read())
             os.remove(zip_path)
         else:
@@ -87,6 +101,10 @@ class CICIDS2017(TabularDataset):
         # Correct feature names
         features_correction(self.data)
         logging.info("Feature names corrected.")
+
+        # Correct categories names
+        category_column_ascii_correction(self.data, "Label")
+        logging.info("Labels names corrected.")
 
         # Drop duplicates
         self.data.drop_duplicates(inplace=True)
@@ -139,23 +157,27 @@ class CICIDS2017(TabularDataset):
         logging.info(f"Dropped columns with one unique value: {list(one_variable.index)}")
 
         # PCA
-        logging.info("Starting PCA...")
-        features = self.data.drop('Label', axis = 1)
-        attacks = self.data['Label']
+        if self.default_config["pca"]:
+            logging.info("Starting PCA...")
+            features = self.data.drop('Label', axis = 1)
+            attacks = self.data['Label']
 
-        scaler = StandardScaler()
-        scaled_features = scaler.fit_transform(features)
+            scaler = StandardScaler()
+            scaled_features = scaler.fit_transform(features)
 
-        size = len(features.columns) // 2
-        ipca = IncrementalPCA(n_components = size, batch_size = 500)
-        for batch in np.array_split(scaled_features, len(features) // 500):
-            ipca.partial_fit(batch)
+            size = len(features.columns) // 2
+            ipca = IncrementalPCA(n_components = size, batch_size = 500)
+            for batch in np.array_split(scaled_features, len(features) // 500):
+                ipca.partial_fit(batch)
 
-        logging.info(f'information retained: {sum(ipca.explained_variance_ratio_):.2%}')
-        transformed_features = ipca.transform(scaled_features)
-        self.data = pd.DataFrame(transformed_features, columns = [f'PC{i+1}' for i in range(size)])
-        self.data['Label'] = attacks.values
-        logging.info("PCA complete.")
+            logging.info(f'information retained: {sum(ipca.explained_variance_ratio_):.2%}')
+            transformed_features = ipca.transform(scaled_features)
+            self.data = pd.DataFrame(transformed_features, columns = [f'PC{i+1}' for i in range(size)])
+            self.data['Label'] = attacks.values
+            logging.info("PCA complete.")
+
+        if self.default_config["classes_mapping"]:
+            self.data['Label'].map(CLASSES_MAPPING)
 
         logging.info("...preprocessing DONE")
 

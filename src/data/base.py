@@ -88,8 +88,10 @@ class TabularDataset(BaseDataset):
         """
         logging.info("Loading dataset...")
         if os.path.isfile(self.file_path):
+            print("here")
             self._collect()
         else:
+            print(self.file_path)
             self._collect()
             self._preprocess()
             self._save()
