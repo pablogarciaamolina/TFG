@@ -101,6 +101,7 @@ class MLClassifier:
             raise FileNotFoundError(f"Model file '{filepath}' not found.")
         
         self.model = joblib.load(filepath)
+        self.trained = True
         logging.info(f'Model loaded from {filepath}')
         
     
