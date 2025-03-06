@@ -60,14 +60,27 @@ class TabNetModel:
         )
 
         # Evaluate training
-        y_train_pred = self.model.predict(X_train)
-        y_val_pred = self.model.predict(X_val)
+        y_train_pred = self.predict(X_train)
+        y_val_pred = self.predict(X_val)
         train_accuracy = accuracy_score(y_train, y_train_pred)
         val_accuracy = accuracy_score(y_val, y_val_pred)
         logging.info(f"Train Accuracy: {train_accuracy:.4f}")
         logging.info(f"Validation Accuracy: {val_accuracy:.4f}")
 
         return train_accuracy, val_accuracy
+    
+    def predict(self, X) -> np.ndarray:
+        """
+        Method for predicting samples with the trained model
+    
+        Args:
+            X: The data matrix for which we want to get the predictions.
+
+        Returns:
+            ndarray of shape (n_samples,). Vector containing the class labels for each sample.
+        """
+
+        return self.model.predict(X)
 
     def plot_metrics(self) -> None:
         """
