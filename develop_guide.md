@@ -33,3 +33,7 @@
 
 - Preparing data for models
     - Binarizing
+
+# Other
+
+- Update README!
