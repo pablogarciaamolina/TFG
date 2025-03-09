@@ -37,7 +37,6 @@ TABNET_CONFIG = {
     "mask_type": "entmax",
 }
 TABNET_TRAINING_PARAMS = {
-    "eval_name": ['val'],
     "eval_metric": ["accuracy"],
     "max_epochs": 200,
     "batch_size": 1024,

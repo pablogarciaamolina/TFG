@@ -1,11 +1,11 @@
 import os
+from typing import Optional
 import logging
 import numpy as np
 import matplotlib.pyplot as plt
+
 from pytorch_tabnet.tab_model import TabNetClassifier
 from pytorch_tabnet.pretraining import TabNetPretrainer
-# from sklearn.preprocessing import label_binarize
-# from pytorch_tabnet.metrics import accuracy_score, roc_auc_score
 
 from .base import SklearnTrainableModel
 from src.models.config import TABNET_PRETRAINER_CONFIG, TABNET_CONFIG, TABNET_PRETRAINING_PARAMS, TABNET_TRAINING_PARAMS, TABNET_SAVING_PATH
@@ -14,7 +14,9 @@ from src.models.config import TABNET_PRETRAINER_CONFIG, TABNET_CONFIG, TABNET_PR
 
 class TabNetModel(SklearnTrainableModel):
 
-    def __init__(self, name: str, pretrain: bool = True) -> None:
+    model: TabNetClassifier
+
+    def __init__(self, name: str = "tabnet", pretrain: bool = True) -> None:
         """
         Constructor for the class
 
@@ -27,20 +29,42 @@ class TabNetModel(SklearnTrainableModel):
         super().__init__(name, model)
         self.pretrainer = TabNetPretrainer(**TABNET_PRETRAINER_CONFIG) if pretrain else None
 
-    def fit(self, x: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, x: np.ndarray, y: np.ndarray, x_val: Optional[np.array], y_val: Optional[np.ndarray]) -> None:
+        """
+        Performs pretreining (if specified) and then trains the model based on the configuration paramenters
+
+        Args:
+            x_train: Training data features
+            y_train: Trianing datat labels
+            x_val: Optional validation data features
+            y_val: Optional validation data labels
+
+        Return:
+            The training and validation accuracy final metrics for the model
+        """
 
         # Pretraining
-        logging.info("Pretraining for TabNet...")
-        print(TABNET_PRETRAINING_PARAMS)
-        self.pretrainer.fit(
-            x,
-            **TABNET_PRETRAINING_PARAMS
-        )
+        if self.pretrainer:
+            logging.info("Pretraining for TabNet...")
+            eval_set = [x_val] if x_val is not None else None
+            self.pretrainer.fit(
+                x,
+                eval_set=eval_set,
+                **TABNET_PRETRAINING_PARAMS
+            )
 
         # Training
         logging.info("Training TabNet model...")
+        if (x_val is not None) and (y_val is not None):
+            eval_set = [(x_val, y_val),]
+            eval_name = ['val']
+        else:
+            eval_set = None
+            eval_name = None
         self.model.fit(
             x, y,
+            eval_set=eval_set,
+            eval_name=eval_name,
             **TABNET_TRAINING_PARAMS,
             from_unsupervised=self.pretrainer,
         )
@@ -55,8 +79,34 @@ class TabNetModel(SklearnTrainableModel):
         NOTE: Not having trained the model will raise an error. Loading the model from memory does not include its past training history.
         """
         
-        plt.plot(self.model.history['loss'])
         plt.plot(self.model.history['lr'])
+
+        clf = self.model
+        train_loss = clf.history["loss"]
+        if "val_accuracy" in clf.history.history.keys():
+            val_metric = clf.history["val_accuracy"]  # Replace with "val_accuracy" if using accuracy
+        else:
+            val_metric = None
+
+        # Plot Loss
+        plt.figure(figsize=(12, 5))
+        plt.subplot(1, 2, 1)
+        plt.plot(train_loss, label="Train Loss")
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+        plt.title("Tabnet Training Loss Over Epochs")
+        plt.legend()
+
+        # Plot Evaluation Metric
+        plt.subplot(1, 2, 2)
+        if val_metric is not None:
+            plt.plot(val_metric, label="Validation Accuracy", color="orange")
+        plt.xlabel("Epochs")
+        plt.ylabel("Accuracy")
+        plt.title("Tabnet Validation Acuracy Over Epochs")
+        plt.legend()
+
+        plt.show()
 
     def save(self) -> None:
 
@@ -67,37 +117,6 @@ class TabNetModel(SklearnTrainableModel):
 
         path = os.path.join(TABNET_SAVING_PATH, self.name + ".zip")
         self.model.load_model(path)
-
-    # def evaluate(self, X_test, y_test) -> tuple[float, float]:
-    #     """
-    #     Evaluates performance of the model over a test set
-
-    #     Args:
-    #         X_test: Test data features
-    #         y_test: Test data labels
-
-    #     Returns:
-    #         A tuple containing the accuracy and roc auc score
-    #     """
-
-    #     logging.info("Evaluating TabNet model...")
-        
-    #     y_pred = self.model.predict(X_test) 
-    #     y_proba = self.model.predict_proba(X_test)
-        
-    #     all_classes = np.arange(y_proba.shape[1])
-    #     y_test_one_hot = label_binarize(y_test, classes=all_classes)
-
-    #     logging.info(f"Unique values in y_test: {np.unique(y_test)}")
-    #     logging.info(f"First 5 rows of y_proba:\n {y_proba[:5]}")
-    #     logging.info(f"Sum of probabilities per sample: {np.sum(y_proba, axis=1)[:5]}")
-
-    #     test_accuracy = accuracy_score(y_test, y_pred)
-    #     logging.info(f"Test Accuracy: {test_accuracy:.4f}")
-    #     test_auc = roc_auc_score(y_test_one_hot, y_proba, multi_class="ovr")
-    #     logging.info(f"Test auc score: {test_auc}") # NOTE: If not all classes are present then the ROC AUC score will be 'nan'
-
-    #     return test_accuracy, test_auc
 
     def explain(self, x) -> None:
         """

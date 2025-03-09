@@ -38,7 +38,6 @@ class BasePipeline(ABC):
     def evaluate_given_predictions(self,
         predictions,
         true_labels,
-        classes: list
     ) -> dict:
         """
         Evaluating with predictions already obtained
@@ -54,6 +53,7 @@ class BasePipeline(ABC):
         """
         
         # Extract class names and metrics
+        classes = np.sort(np.unique(true_labels))
         metrics = classification_report(y_true=true_labels, y_pred=predictions, target_names=classes, output_dict=True)
         precision = [metrics[target_name]['precision'] for target_name in classes]
         recall = [metrics[target_name]['recall'] for target_name in classes]
@@ -90,11 +90,13 @@ class TTPipeline(BasePipeline):
     def train(self,
         x_train,
         y_train,
-        cv: int = 10
+        cv: int = 10,
+        x_val = None,
+        y_val = None
     ) -> None:
         
         if isinstance(self.model, TabNetModel):
-            self.model.fit(x_train, y_train)
+            self.model.fit(x_train, y_train, x_val, y_val)
         elif isinstance(self.model, MLClassifier):
             self.model.fit(x_train, y_train, cv=cv, verbose=1)
 
@@ -105,13 +107,15 @@ class TTPipeline(BasePipeline):
         results = self.evaluate_given_predictions(
             pred,
             y_test,
-            self.model.model.classes_
         )
 
         return results
 
 
-class APIPipeline(BasePipeline):
+class TAPipeline(BasePipeline):
+    """
+    Tabular-API Pipeline 
+    """
 
     model: LLModel
 
@@ -149,7 +153,6 @@ class APIPipeline(BasePipeline):
         results = self.evaluate_given_predictions(
             preds,
             y_test,
-            np.sort(y_test.unique())
         )
 
         return results
