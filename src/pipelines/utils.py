@@ -7,31 +7,53 @@ from src.data.utils import jsonize_rows
 from src.models.tabnet import TabNetModel
 from src.models.ml import MLClassifier
 
-def clasiffy_with_llm(
-        llm,
-        icl_data: pd.DataFrame,
-        test_data: pd.DataFrame,
-        class_column: str = "Label"
-) -> list[list[str]]:
+def classify_with_llm(
+    llm,
+    icl_data: pd.DataFrame,
+    test_data: pd.DataFrame,
+    task: str = "Classify data",
+    class_column: str = "Label",
+) -> list[str]:
+    """
+    Pipeline for classifying test input data using an LLM
 
-    test_X = test_data.drop(columns=[class_column])
-    test_y = test_data[class_column]
+    Args:
+        llm: The API for LLM model
+        icl_data: A pandas Dataframe containing the ICL examples
+        test_data: A pandas Dataframe containing the test data to be clasified
+        task: A sentence that further explains the classification task
+        class_column: The name of the column containing the labels in the ``icl_data``
 
-
-    context = "You are a Intrusion Detection Classifier. Given this examples: \n"
-    for json in jsonize_rows(icl_data):
-        context += json + "\n"
-    context += f"Where {class_column} is the classification of the example, classify the data that comes to you."
-
-    text_list = jsonize_rows(test_X)
-    instruction = f"Give me the {class_column} for each of the next data:\n"
-    for t in text_list:
-        instruction += t + "\n"
-
-
-    response = llm.ask(instruction=instruction, context=context)
-
-    ...
+    Return:
+        A list containing the labels for each of the test inputs in order.
+    """
+    
+    icl_inputs = jsonize_rows(icl_data.drop(columns=["Label"]))
+    context = (
+        f"You are performing the following classification task: {task}\n\n"
+        "Here are some examples:\n"
+    )
+    for i, o in zip(icl_inputs, icl_data[class_column]):
+        context += str(
+            {
+                "Input": i,
+                "Output": o
+            }
+        ) + "\n"
+    context += f"Where Output is the classification label for each data entry."
+    
+    # INSTRUCTIONS
+    test_inputs = jsonize_rows(test_data)
+    pre_instruction = f"Classify the following input and provide the corresponding Output:\n"
+    last_instruction = f"Your answer must only be the Output for the Input. Make sure you provide the raw Output, and nothing else."
+    
+    results = []
+    for i in test_inputs:
+        instructions = pre_instruction + i + "\n" + last_instruction
+        response = llm.ask(instruction=instructions, context=context)
+        results.append(response["answer"])
+    
+    return results
 
 
 def train_and_evaluate(
