@@ -24,10 +24,10 @@
 ## MODELS
 
 - Implementation of a base class for all classification models, so adding new model is easier and they all share a common api
+- Base class for LLMs APIs !
 
 ## PIPELINE
 
-- Implement pipeline for using CLI to clasify a datset using Mistral and Gemini
 
 ## IMPLEMENTATION / Notebooks?
 
