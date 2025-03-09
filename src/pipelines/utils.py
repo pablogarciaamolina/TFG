@@ -6,9 +6,10 @@ from sklearn.metrics import accuracy_score, classification_report
 from src.data.utils import jsonize_rows
 from src.models.tabnet import TabNetModel
 from src.models.ml import MLClassifier
+from src.models.llm_api import BaseChat
 
 def classify_with_llm(
-    llm,
+    llm: BaseChat,
     icl_data: pd.DataFrame,
     test_data: pd.DataFrame,
     task: str = "Classify data",
@@ -50,7 +51,7 @@ def classify_with_llm(
     results = []
     for i in test_inputs:
         instructions = pre_instruction + i + "\n" + last_instruction
-        response = llm.ask(instruction=instructions, context=context)
+        response = llm.ask(instructions=instructions, context=context)
         results.append(response["answer"])
     
     return results

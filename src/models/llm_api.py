@@ -74,6 +74,7 @@ class GeminiChat(BaseChat):
 
     def ask(self, instructions: str, context: Optional[str] = None) -> dict[str, str]:
 
+        context = context if context else ""
         response = self.client.models.generate_content(
             model=self.model, contents=context + "\n" + instructions
         )
