@@ -5,6 +5,7 @@ import logging
 import backoff
 import google.api_core
 import google.api_core.exceptions
+import google.genai.errors
 import pandas as pd
 import google.genai
 import mistralai
@@ -119,7 +120,7 @@ class Mistral(LLModel):
 
     @backoff.on_exception(
         backoff.expo,
-        mistralai._exceptions.SDKError,
+        mistralai.models.SDKError,
         max_tries=BACKOFF_MAX_TRIES,
         factor=BACKOFF_FACTOR,
         jitter=backoff.full_jitter,
@@ -156,7 +157,7 @@ class Gemini(LLModel):
 
     @backoff.on_exception(
         backoff.expo,
-        exception=google.api_core.exceptions.GoogleAPIError,
+        exception=google.genai.errors.ClientError,
         max_tries=BACKOFF_MAX_TRIES,
         factor=BACKOFF_FACTOR,
         jitter=backoff.full_jitter,
