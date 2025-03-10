@@ -10,8 +10,6 @@ from pytorch_tabnet.pretraining import TabNetPretrainer
 from .base import SklearnTrainableModel
 from src.models.config import TABNET_PRETRAINER_CONFIG, TABNET_CONFIG, TABNET_PRETRAINING_PARAMS, TABNET_TRAINING_PARAMS, TABNET_SAVING_PATH
 
-
-
 class TabNetModel(SklearnTrainableModel):
 
     model: TabNetClassifier
