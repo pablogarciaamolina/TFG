@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from typing import Any, Optional
+import logging
 
 import pandas as pd
 import google.genai
@@ -76,9 +77,12 @@ class LLModel(BaseModel):
         last_instruction = f"Your answer must only be the Output for the Input. Make sure you provide the raw Output, and nothing else."
         
         results = []
-        for i in test_inputs:
-            instructions = pre_instruction + i + "\n" + last_instruction
+        logging.info('Starting predictions...asking the model...')
+        for i in range(len(test_inputs)):
+            logging.info(f'Prediction nº{i+1}...')
+            instructions = pre_instruction + test_inputs[i] + "\n" + last_instruction
             response = self.ask(instructions=instructions, context=context)
+            logging.info(f'Response: {response["answer"]}')
             results.append(response["answer"])
         
         return results
