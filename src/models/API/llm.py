@@ -7,7 +7,7 @@ import google.genai
 import mistralai
 import google
 
-from src.models.base import BaseModel
+from models._base import BaseModel
 from src.data.utils import jsonize_rows
 from src.models.config import MISTRAL_API_KEY, GEMINI_API_KEY
 

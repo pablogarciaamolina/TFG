@@ -7,7 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, classification_report
 
-from src.models.base import BaseModel
+from models._base import BaseModel
 from src.models.trainable.base import SklearnTrainableModel
 from src.models.API.llm import LLModel
 from src.models.trainable.tabnet import TabNetModel

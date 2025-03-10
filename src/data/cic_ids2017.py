@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from .config import DATA_DIR, CIC_IDS2017_URL, EXTENDED_CIC_IDS2017_URL, ANALYSIS_PATH, CICIDS2017_DEFAULT_CONFIG, CLASSES_MAPPING
-from .base import TabularDataset
+from ._base import TabularDataset
 from .utils import concat_and_save_csv, features_correction, category_column_ascii_correction
 
 class CICIDS2017(TabularDataset):

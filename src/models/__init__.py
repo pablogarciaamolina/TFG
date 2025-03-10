@@ -7,3 +7,5 @@ from .trainable import (
     PreConfigured_LogisticRegression,
     PreConfigured_RandomForest
 )
+
+from .API import Gemini, Mistral
