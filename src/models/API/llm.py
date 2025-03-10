@@ -2,6 +2,9 @@ from abc import abstractmethod
 from typing import Any, Optional
 import logging
 
+import backoff
+import google.api_core
+import google.api_core.exceptions
 import pandas as pd
 import google.genai
 import mistralai
@@ -9,7 +12,8 @@ import google
 
 from src.models._base import BaseModel
 from src.data.utils import jsonize_rows
-from src.models.config import MISTRAL_API_KEY, GEMINI_API_KEY
+from src.models.config import MISTRAL_API_KEY, GEMINI_API_KEY, BACKOFF_MAX_TRIES, BACKOFF_FACTOR
+from src.models.utils import log_backoff
 
 class LLModel(BaseModel):
     
@@ -43,50 +47,65 @@ class LLModel(BaseModel):
         icl_data: pd.DataFrame,
         test_data: pd.DataFrame,
         task: str = "Classify data",
-        class_column: str = "Label",
+        class_column: str = "Label"
     ) -> list[str]:
         """
-        Method for classifying test input data using an LLM
+        Classifies test input data using an LLM, ensuring the output is one of the possible labels.
 
         Args:
-            icl_data: A pandas Dataframe containing the ICL examples
-            test_data: A pandas Dataframe containing the test data to be clasified
-            task: A sentence that further explains the classification task
-            class_column: The name of the column containing the labels in the ``icl_data``
+            icl_data: A pandas DataFrame containing the ICL examples.
+            test_data: A pandas DataFrame containing the test data to be classified.
+            task: A sentence that further explains the classification task.
+            class_column: The name of the column containing the labels in `icl_data`.
 
-        Return:
-            A list containing the labels for each of the test inputs in order.
+        Returns:
+            A list containing the predicted labels for each test input.
         """
         
-        icl_inputs = jsonize_rows(icl_data.drop(columns=["Label"]))
+        # Extract possible labels from icl_data
+        possible_labels = set(icl_data[class_column].unique())
+        
+        # Prepare few-shot context
+        icl_inputs = jsonize_rows(icl_data.drop(columns=[class_column]))
         context = (
             f"You are performing the following classification task: {task}\n\n"
             "Here are some examples:\n"
         )
         for i, o in zip(icl_inputs, icl_data[class_column]):
-            context += str(
-                {
-                    "Input": i,
-                    "Output": o
-                }
-            ) + "\n"
-        context += f"Where Output is the classification label for each data entry."
+            context += str({"Input": i, "Output": o}) + "\n"
+        context += "Where Output is the classification label for each data entry."
         
-        test_inputs = jsonize_rows(test_data)
-        pre_instruction = f"Classify the following input and provide the corresponding Output:\n"
-        last_instruction = f"Your answer must only be the Output for the Input. Make sure you provide the raw Output, and nothing else."
+        # Define instructions
+        pre_instruction = "Classify the following input and provide the corresponding Output:\n"
+        last_instruction = (
+            # f"Your answer must be exactly one of the following labels: {', '.join(possible_labels)}.\n"
+            "Ensure you provide only the raw Output and nothing else."
+        )
         
         results = []
-        logging.info('Starting predictions...asking the model...')
-        for i in range(len(test_inputs)):
+        logging.info('Starting predictions...asking the model...')        
+        test_inputs = jsonize_rows(test_data)
+        for i, test_input in enumerate(test_inputs):
             logging.info(f'Prediction nº{i+1}...')
-            instructions = pre_instruction + test_inputs[i] + "\n" + last_instruction
+            instructions = pre_instruction + test_input + "\n" + last_instruction
             response = self.ask(instructions=instructions, context=context)
-            logging.info(f'Response: {response["answer"]}')
-            results.append(response["answer"])
+            response_text = response["answer"].strip()
+        
+            # Look for a valid label in the response
+            model_output = None
+            for label in possible_labels:
+                if label in response_text:
+                    model_output = label
+                    break
+            
+            if model_output is None:
+                logging.warning(f'No valid label found in response: {response_text}')
+                model_output = None
+            
+            logging.info(f'Response: {model_output}')
+            results.append(model_output)
         
         return results
-
 
 class Mistral(LLModel):
     """
@@ -98,6 +117,15 @@ class Mistral(LLModel):
         super().__init__(model)
         self.client = mistralai.Mistral(api_key=MISTRAL_API_KEY)
 
+    @backoff.on_exception(
+        backoff.expo,
+        mistralai._exceptions.SDKError,
+        max_tries=BACKOFF_MAX_TRIES,
+        factor=BACKOFF_FACTOR,
+        jitter=backoff.full_jitter,
+        giveup=lambda e: "429" not in str(e),  # Retry only on 429 errors
+        on_backoff=log_backoff
+    )
     def ask(self, instructions: str, context: Optional[str] = None) -> dict[str, str]:
 
         messages: list[dict] = [{
@@ -126,6 +154,15 @@ class Gemini(LLModel):
         super().__init__(model)
         self.client = google.genai.Client(api_key=GEMINI_API_KEY)
 
+    @backoff.on_exception(
+        backoff.expo,
+        exception=google.api_core.exceptions.GoogleAPIError,
+        max_tries=BACKOFF_MAX_TRIES,
+        factor=BACKOFF_FACTOR,
+        jitter=backoff.full_jitter,
+        giveup=lambda e: "429" not in str(e),
+        on_backoff=log_backoff
+    )
     def ask(self, instructions: str, context: Optional[str] = None) -> dict[str, str]:
 
         context = context if context else ""
