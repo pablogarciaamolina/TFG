@@ -4,6 +4,8 @@
 
 - Better handling for the different options of data status (avoid redowloading if its already dowloaded, ...)
 
+- balanced_dataset and train_test_split wrapped !
+
 ### CIC-IDS2017
 
 - Problem: If the dataset is already loaded with a configuration, loading another with a different configuration (without deleting the previous) will end in an error, since it tries to concat also the data in the already processed on (previous configuration)
@@ -17,22 +19,10 @@
 - Data analysis
     - Outliers analysis?
 
-- Extended dataset? Avoided bacause it needs futher processing before applying PCA
-
-- Check if new data pipeline works (analysis not tested)
-
 ## MODELS
 
-- Implementation of a base class for all classification models, so adding new model is easier and they all share a common api
-- Base class for LLMs APIs !
 
 ## PIPELINE
-
-
-## IMPLEMENTATION / Notebooks?
-
-- Preparing data for models
-    - Binarizing
 
 # Other
 
