@@ -38,6 +38,7 @@ class BasePipeline(ABC):
     def evaluate_given_predictions(self,
         predictions,
         true_labels,
+        other_info: str = None
     ) -> dict:
         """
         Evaluating with predictions already obtained
@@ -45,7 +46,7 @@ class BasePipeline(ABC):
         Args:
             predictions: Predictions
             true_labels: True labels
-            classes: All possible labels for the data
+            other_info: Other information to include in the report
 
         Returns:
             A dictionary containing the metrics and a figure with the report.
@@ -63,7 +64,7 @@ class BasePipeline(ABC):
         # Generate heatmap report
         fig, ax = plt.subplots(figsize=(14, 6))
         sns.heatmap(data, cmap='Pastel1', annot=True, fmt='.2f', xticklabels=classes, yticklabels=['Precision', 'Recall', 'F1-score'], ax=ax)
-        ax.set_title(f'Metrics Report ({self.model.name})')
+        ax.set_title(f'Metrics Report ({self.model.name}{" - " + other_info if other_info is not None else ""})')
         fig.tight_layout()
 
         accuracy = accuracy_score(true_labels, predictions)
@@ -100,13 +101,21 @@ class TTPipeline(BasePipeline):
         elif isinstance(self.model, MLClassifier):
             self.model.fit(x_train, y_train, cv=cv, verbose=1)
 
-    def evaluate(self, x_test, y_test) -> dict:
+    def evaluate(self, x_test, y_test, other_info: str = None) -> dict:
+        """
+        Pipeline for avaluating the model
+
+        x_test: Test data to be classified.
+        y_test: True labels.
+        other_info: Other information to include in the report.
+        """
         
         pred = self.model.predict(x_test)
 
         results = self.evaluate_given_predictions(
             pred,
             y_test,
+            other_info
         )
 
         return results
@@ -141,7 +150,8 @@ class TAPipeline(BasePipeline):
         y_test: pd.Series,
         task: str = "Behaving like an Intrusion Detection System, classifying the data based on the PC features in the possible classes of attacks or not attack",
         class_column: str = "Label",
-        num_predictions: int = 3
+        num_predictions: int = 3,
+        other_info: str = None
     ) -> dict:
         """
         Evaluates the model with majority voting.
@@ -153,23 +163,27 @@ class TAPipeline(BasePipeline):
             task: A sentence that further explains the classification task.
             class_column: The name of the column containing the labels in `icl_data`.
             num_predictions: Number of times to generate predictions for majority voting.
+            other_info: Other information to include in the report
         
         Returns:
             A dictionary containing the metrics and a figure with the report.
         """
-        # Obtain multiple predictions
+
         all_preds = [
             self.model.predict(icl_data, x_test, task, class_column)
             for _ in range(num_predictions)
         ]
         
-        # Compute majority vote
         final_preds = self.majority_vote(all_preds)
 
-        # Evaluate results
+        if other_info:
+            other_info = other_info + f", majority voting with {num_predictions} predictions"
+        else:
+            other_info = f"majority voting with {num_predictions} predictions"
         results = self.evaluate_given_predictions(
             final_preds,
             y_test,
+            other_info
         )
 
         return results
