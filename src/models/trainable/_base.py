@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from models._base import BaseModel
+from src.models._base import BaseModel
 
 
 class TrainableModel(BaseModel):

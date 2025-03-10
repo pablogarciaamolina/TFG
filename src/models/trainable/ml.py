@@ -5,7 +5,7 @@ import joblib
 from sklearn.base import BaseEstimator
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 
-from .base import SklearnTrainableModel
+from ._base import SklearnTrainableModel
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
