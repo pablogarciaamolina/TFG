@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from collections import Counter
 import numpy as np
 
 import pandas as pd
@@ -114,44 +114,61 @@ class TTPipeline(BasePipeline):
 
 class TAPipeline(BasePipeline):
     """
-    Tabular-API Pipeline 
+    Tabular-API Pipeline with Majority Voting
     """
 
     model: LLModel
 
     def __init__(self, model: LLModel):
-
         super().__init__(model)
+    
+    def majority_vote(self, predictions: list[list[str]]) -> list[str]:
+        """
+        Computes the majority vote for each sample.
+        
+        Args:
+            predictions: A list of lists containing multiple predictions per sample.
+        
+        Returns:
+            A list containing the final prediction per sample based on majority voting.
+        """
+        transposed_preds = zip(*predictions)  # Transpose to get predictions per sample
+        return [Counter(sample_preds).most_common(1)[0][0] for sample_preds in transposed_preds]
 
     def evaluate(self,
         icl_data: pd.DataFrame,
         x_test: pd.DataFrame,
         y_test: pd.Series,
-        task: str = "Behaving like a Intrusion Detection System, classifing the data based on the PC features in the possible classes of attacks or not attack",
+        task: str = "Behaving like an Intrusion Detection System, classifying the data based on the PC features in the possible classes of attacks or not attack",
         class_column: str = "Label",
+        num_predictions: int = 3
     ) -> dict:
         """
-        ...
+        Evaluates the model with majority voting.
         
         Args:
-            icl_data: A pandas Dataframe containing the ICL examples
-            test_data: A pandas Dataframe containing the test data to be clasified
-            task: A sentence that further explains the classification task
-            class_column: The name of the column containing the labels in the ``icl_data``
-
+            icl_data: A pandas DataFrame containing the ICL examples.
+            x_test: A pandas DataFrame containing the test data to be classified.
+            y_test: A pandas Series containing the true labels.
+            task: A sentence that further explains the classification task.
+            class_column: The name of the column containing the labels in `icl_data`.
+            num_predictions: Number of times to generate predictions for majority voting.
+        
         Returns:
             A dictionary containing the metrics and a figure with the report.
         """
+        # Obtain multiple predictions
+        all_preds = [
+            self.model.predict(icl_data, x_test, task, class_column)
+            for _ in range(num_predictions)
+        ]
+        
+        # Compute majority vote
+        final_preds = self.majority_vote(all_preds)
 
-        preds = self.model.predict(
-            icl_data,
-            x_test,
-            task,
-            class_column
-        )
-
+        # Evaluate results
         results = self.evaluate_given_predictions(
-            preds,
+            final_preds,
             y_test,
         )
 
