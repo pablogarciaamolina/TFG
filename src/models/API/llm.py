@@ -166,13 +166,26 @@ class Gemini(LLModel):
     )
     def ask(self, instructions: str, context: Optional[str] = None) -> dict[str, str]:
 
-        context = context if context else ""
-        response = self.client.models.generate_content(
-            model=self.model, contents=context + "\n" + instructions
-        )
 
-        return {
-            "answer": response.text,
-            "finish_reason": response.candidates[0].finish_reason.name
-        }
+        got_response = False
+        while not got_response:
+
+            context = context if context else ""
+            response = self.client.models.generate_content(
+                model=self.model, contents=context + "\n" + instructions
+            )
+
+            try:
+                response_dict = {
+                    "answer": response.text,
+                    "finish_reason": response.candidates[0].finish_reason.name
+                }
+                got_response = True
+            
+            except Exception:
+
+                got_response = False
+
+        return response_dict
+
         
