@@ -6,9 +6,10 @@ Intrusion Detection Systems for IoT Networks
 
 ...
 
-## Overview
+## Overview - Motivation
 
 ...
+
 
 ## Project Structure
 
@@ -16,18 +17,23 @@ Intrusion Detection Systems for IoT Networks
 TFG/
 ├── src/
 │   ├── data/
-│   │   ├── __init__.py
-│   │   ├── base.py
+│   │   ├── ...
 │   │   ├── cic_ids2017.py
 │   │   ├── config.py
 │   │   ├── utils.py
 │   ├── models/
 │   │   ├── __init__.py
-│   │   ├── ml.py
-│   │   ├── tabnet.py
-│   │   ├── lmm_api.py
+│   │   ├── API/
+│   │   │   ├── ...
+│   │   │   ├── llm.py
+│   │   ├── trainable/
+│   │   │   ├── ...
+│   │   │   ├── ml.py
+│   │   │   ├── tabnet.py
+│   │   ├── ...
+│   │   ├── config.py
 │   ├── pipelines/
-│   │   ├── __init__.py
+│   │   ├── ...
 │   │   ├── utils.py
 ├── .gitgnore
 ├── README.md
@@ -36,9 +42,22 @@ TFG/
 ```
 
 
-## CODE - Use and Specs
+
+
+## Modules - Use and Specs
+
+The code is divided into three main categories: ``data``, ``models`` and ``pipelines``. Each contain the series of modules that can be used and easily changed for research. Also, this structure allows for great expandability, making very convenient the extension of functionalities.
 
 ### DATA
+
+This category wraps all the modules related to the datasets. Each dataset counts with its own module, that allows for easy download, preprocessing and adaptaion.
+
+Modules hierarchy:
+```
+...
+```
+
+#### CIC-IDS2017
 
 ...
 
