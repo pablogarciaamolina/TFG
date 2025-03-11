@@ -4,7 +4,6 @@ import torch
 ML_SAVING_PATH = os.path.join("models", "ml")
 TABNET_SAVING_PATH = os.path.join("models", "tabnet")
 
-
 # TABNET
 TABNET_PRETRAINER_CONFIG = {
     "n_d": 10,
@@ -47,9 +46,6 @@ TABNET_TRAINING_PARAMS = {
 
 
 # ML MODELS
-MISTRAL_API_KEY = os.environ["MISTRAL_API_KEY"]
-GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
-
 LOGISTIC_REGRESSION_CONFIG = {
     "multi_class": "multinomial",
     "max_iter": 15000, "solver": 'sag',
@@ -79,5 +75,13 @@ DECISION_TREE_CONFIG = {
 
 
 # LLMs
+MISTRAL_API_KEY = os.environ["MISTRAL_API_KEY"]
+GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+
 BACKOFF_MAX_TRIES = 8
 BACKOFF_FACTOR = 2
+
+GEMENI_GENERATION_CONFIG = {
+    "top_p": 0.8,
+    "temperature": 0.9
+}

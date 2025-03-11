@@ -6,6 +6,8 @@ import backoff
 import google.api_core
 import google.api_core.exceptions
 import google.genai.errors
+import google.genai.tunings
+import google.genai.types
 import pandas as pd
 import google.genai
 import mistralai
@@ -13,7 +15,7 @@ import google
 
 from src.models._base import BaseModel
 from src.data.utils import jsonize_rows
-from src.models.config import MISTRAL_API_KEY, GEMINI_API_KEY, BACKOFF_MAX_TRIES, BACKOFF_FACTOR
+from src.models.config import MISTRAL_API_KEY, GEMINI_API_KEY, BACKOFF_MAX_TRIES, BACKOFF_FACTOR, GEMENI_GENERATION_CONFIG
 from src.models.utils import log_backoff
 
 class LLModel(BaseModel):
@@ -150,6 +152,8 @@ class Mistral(LLModel):
     
 class Gemini(LLModel):
 
+    client: google.genai.Client
+
     def __init__(self, model: str = "gemini-2.0-pro-exp-02-05"):
         
         super().__init__(model)
@@ -167,12 +171,14 @@ class Gemini(LLModel):
     def ask(self, instructions: str, context: Optional[str] = None) -> dict[str, str]:
 
 
+        config = google.genai.types.GenerateContentConfig(**GEMENI_GENERATION_CONFIG)
         got_response = False
         while not got_response:
 
             context = context if context else ""
             response = self.client.models.generate_content(
-                model=self.model, contents=context + "\n" + instructions
+                model=self.model, contents=context + "\n" + instructions,
+                config=config
             )
 
             try:
