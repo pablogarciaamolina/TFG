@@ -45,7 +45,7 @@ class CICIDS2017(TabularDataset):
     def _get_id(self) -> str:
 
         sorted_values = sorted(self.default_config.items())
-        return '_'.join([f"{key}({value})" for key, value in sorted_values])
+        return "cic_ids2017_" + '_'.join([f"{key}({value})" for key, value in sorted_values])
 
     def _download(self) -> None:
         """
