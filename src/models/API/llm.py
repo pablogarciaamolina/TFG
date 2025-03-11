@@ -39,8 +39,8 @@ class LLModel(BaseModel):
         Returns:
             :A dictionary containing the reply from the model as well as the exit reason of the model (control purposes). Such like:
                 {
-                    "answer": <str contining the answer from the model>,
-                    "finish_reason": <exit reason in str format>
+                    "answer": [<str contining the answer from the model>, ...(as many as specified in the configuration)],
+                    "finish_reason": [<exit reason in str format>, ... (as many as specified in the configuration)]
                 }
         """
 
@@ -50,7 +50,8 @@ class LLModel(BaseModel):
         icl_data: pd.DataFrame,
         test_data: pd.DataFrame,
         task: str = "Classify data",
-        class_column: str = "Label"
+        class_column: str = "Label",
+        **generation_config
     ) -> list[str]:
         """
         Classifies test input data using an LLM, ensuring the output is one of the possible labels.
@@ -60,9 +61,10 @@ class LLModel(BaseModel):
             test_data: A pandas DataFrame containing the test data to be classified.
             task: A sentence that further explains the classification task.
             class_column: The name of the column containing the labels in `icl_data`.
+            **generation_config: Further configuration for model generation.
 
         Returns:
-            A list containing the predicted labels for each test input.
+            A list containing the lists of predicted labels for each test input. As many predictions (candidates) for each input as specified in the gneration configuration.
         """
         
         # Extract possible labels from icl_data
@@ -91,19 +93,24 @@ class LLModel(BaseModel):
         for i, test_input in enumerate(test_inputs):
             logging.info(f'Prediction nº{i+1}...')
             instructions = pre_instruction + test_input + "\n" + last_instruction
-            response = self.ask(instructions=instructions, context=context)
-            response_text = response["answer"].strip()
-        
-            # Look for a valid label in the response
-            model_output = None
-            for label in possible_labels:
-                if label in response_text:
-                    model_output = label
-                    break
+            response = self.ask(instructions=instructions, context=context, **generation_config)
+
+            model_output = []
+            for candidate in response["answer"]:
+                response_text = candidate.strip()
             
-            if model_output is None:
-                logging.warning(f'No valid label found in response: {response_text}')
-                model_output = None
+                # Look for a valid label in the response
+                output = None
+                for label in possible_labels:
+                    if label in response_text:
+                        output = label
+                        break
+                
+                if output is None:
+                    logging.warning(f'No valid label found in response: {response_text}')
+                    output = None
+
+                model_output.append(output)
             
             logging.info(f'Response: {model_output}')
             results.append(model_output)
@@ -129,7 +136,7 @@ class Mistral(LLModel):
         giveup=lambda e: "429" not in str(e),  # Retry only on 429 errors
         on_backoff=log_backoff
     )
-    def ask(self, instructions: str, context: Optional[str] = None) -> dict[str, str]:
+    def ask(self, instructions: str, context: Optional[str] = None, **generation_config) -> dict[str, str]:
 
         messages: list[dict] = [{
             "role": "system",
@@ -146,8 +153,8 @@ class Mistral(LLModel):
         )
 
         return {
-            "answer": response.choices[0].message.content,
-            "finish_reason": response.choices[0].finish_reason
+            "answer": [response.choices[0].message.content],
+            "finish_reason": [response.choices[0].finish_reason]
         }
     
 class Gemini(LLModel):
@@ -168,10 +175,15 @@ class Gemini(LLModel):
         giveup=lambda e: "429" not in str(e),
         on_backoff=log_backoff
     )
-    def ask(self, instructions: str, context: Optional[str] = None) -> dict[str, str]:
+    def ask(self, instructions: str, context: Optional[str] = None, **generation_config) -> dict[str, list|str]:
 
 
-        config = google.genai.types.GenerateContentConfig(**GEMENI_GENERATION_CONFIG)
+        default_config = GEMENI_GENERATION_CONFIG
+        default_config.update(generation_config)
+
+        config = google.genai.types.GenerateContentConfig(
+            **default_config
+        )
         got_response = False
         while not got_response:
 
@@ -183,8 +195,8 @@ class Gemini(LLModel):
 
             try:
                 response_dict = {
-                    "answer": response.text,
-                    "finish_reason": response.candidates[0].finish_reason.name
+                    "answer": [c.content.parts[0].text for c in response.candidates],
+                    "finish_reason": [c.finish_reason.name for c in response.candidates]
                 }
                 got_response = True
             
@@ -193,5 +205,3 @@ class Gemini(LLModel):
                 got_response = False
 
         return response_dict
-
-        

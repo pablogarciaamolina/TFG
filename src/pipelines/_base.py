@@ -136,13 +136,12 @@ class TAPipeline(BasePipeline):
         Computes the majority vote for each sample.
         
         Args:
-            predictions: A list of lists containing multiple predictions per sample.
+            predictions: A list of lists, each containing multiple predictions per sample.
         
         Returns:
             A list containing the final prediction per sample based on majority voting.
         """
-        transposed_preds = zip(*predictions)  # Transpose to get predictions per sample
-        return [Counter(sample_preds).most_common(1)[0][0] for sample_preds in transposed_preds]
+        return [Counter(sample_preds).most_common(1)[0][0] for sample_preds in predictions]
 
     def evaluate(self,
         icl_data: pd.DataFrame,
@@ -169,12 +168,9 @@ class TAPipeline(BasePipeline):
             A dictionary containing the metrics and a figure with the report.
         """
 
-        all_preds = [
-            self.model.predict(icl_data, x_test, task, class_column)
-            for _ in range(num_predictions)
-        ]
+        preds = self.model.predict(icl_data, x_test, task, class_column, candidate_count=num_predictions)
         
-        final_preds = self.majority_vote(all_preds)
+        final_preds = self.majority_vote(preds)
 
         if other_info:
             other_info = other_info + f", majority voting with {num_predictions} predictions"

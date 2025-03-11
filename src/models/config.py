@@ -83,5 +83,6 @@ BACKOFF_FACTOR = 2
 
 GEMENI_GENERATION_CONFIG = {
     "top_p": 0.8,
-    "temperature": 0.9
+    "temperature": 0.9,
+    "candidate_count": 1
 }
