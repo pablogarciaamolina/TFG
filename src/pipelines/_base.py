@@ -131,7 +131,11 @@ class TAPipeline(BasePipeline):
     def __init__(self, model: LLModel):
         super().__init__(model)
     
-    def majority_vote(self, predictions: list[list[str]]) -> list[str]:
+    def majority_vote(
+        self,
+        predictions: list[list[str]],
+        unkown_label = None
+    ) -> list[str]:
         """
         Computes the majority vote for each sample.
         
@@ -141,7 +145,15 @@ class TAPipeline(BasePipeline):
         Returns:
             A list containing the final prediction per sample based on majority voting.
         """
-        return [Counter(sample_preds).most_common(1)[0][0] for sample_preds in predictions]
+
+        final_predictions = []
+        for sample_preds in predictions:
+            filtered_preds = [pred for pred in sample_preds if pred is not None]
+            if filtered_preds:
+                final_predictions.append(Counter(filtered_preds).most_common(1)[0][0])
+            else:
+                final_predictions.append(unkown_label)
+        return final_predictions
 
     def evaluate(self,
         icl_data: pd.DataFrame,
