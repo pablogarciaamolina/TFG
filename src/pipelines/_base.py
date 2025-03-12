@@ -6,12 +6,10 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, classification_report
-from google.genai import Client
-from mistralai import Mistral
 
 from src.models._base import BaseModel
 from src.models.trainable._base import SklearnTrainableModel
-from src.models.API.llm import LLModel
+from src.models.API.llm import LLModel, Mistral, Gemini
 from src.models.trainable.tabnet import TabNetModel
 from src.models.trainable.ml import MLClassifier
 
@@ -128,6 +126,8 @@ class TAPipeline(BasePipeline):
     Tabular-API Pipeline with Majority Voting
     """
 
+    model: LLModel
+
     def __init__(self, model: LLModel):
         super().__init__(model)
     
@@ -172,7 +172,7 @@ class TAPipeline(BasePipeline):
             config = {
                 "n": num_predictions
             }
-        elif isinstance(self.model, Client):
+        elif isinstance(self.model, Gemini):
             config = {
                 "candidate_count": num_predictions
             }
