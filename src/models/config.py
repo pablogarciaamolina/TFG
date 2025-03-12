@@ -81,8 +81,14 @@ GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 BACKOFF_MAX_TRIES = 8
 BACKOFF_FACTOR = 2
 
-GEMENI_GENERATION_CONFIG = {
+GEMINI_GENERATION_CONFIG = {
     "top_p": 0.8,
     "temperature": 0.9,
     "candidate_count": 1
+}
+
+MISTRAL_GENERATION_CONFIG = {
+    "top_p": 0.8,
+    "temperature": 0.9,
+    "n": 1
 }

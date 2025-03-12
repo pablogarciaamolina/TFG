@@ -16,7 +16,7 @@ import google
 
 from src.models._base import BaseModel
 from src.data.utils import jsonize_rows
-from src.models.config import MISTRAL_API_KEY, GEMINI_API_KEY, BACKOFF_MAX_TRIES, BACKOFF_FACTOR, GEMENI_GENERATION_CONFIG
+from src.models.config import MISTRAL_API_KEY, GEMINI_API_KEY, BACKOFF_MAX_TRIES, BACKOFF_FACTOR, GEMINI_GENERATION_CONFIG, MISTRAL_GENERATION_CONFIG
 from src.models.utils import log_backoff
 
 class LLModel(BaseModel):
@@ -124,6 +124,8 @@ class Mistral(LLModel):
     Mistral assitant API following https://docs.mistral.ai/api/
     """
 
+    client: mistralai.Mistral
+
     def __init__(self, model: str = "mistral-large-latest"):
 
         super().__init__(model)
@@ -138,7 +140,10 @@ class Mistral(LLModel):
         giveup=lambda e: "429" not in str(e),  # Retry only on 429 errors
         on_backoff=log_backoff
     )
-    def ask(self, instructions: str, context: Optional[str] = None, **generation_config) -> dict[str, str]:
+    def ask(self, instructions: str, context: Optional[str] = None, **generation_config) -> dict[str, list]:
+
+        default_config = MISTRAL_GENERATION_CONFIG.copy()
+        default_config.update(generation_config)
 
         messages: list[dict] = [{
             "role": "system",
@@ -149,15 +154,27 @@ class Mistral(LLModel):
             "content": instructions
         })
 
-        response = self.client.chat.complete(
-            model=self.model,
-            messages=messages
-        )
+        got_response = False
+        while not got_response:
 
-        return {
-            "answer": [response.choices[0].message.content],
-            "finish_reason": [response.choices[0].finish_reason]
-        }
+            response = self.client.chat.complete(
+                model=self.model,
+                messages=messages,
+                **default_config
+            )
+
+            try:
+                response_dict = {
+                    "answer": [c.message.content for c in response.choices],
+                        "finish_reason": [c.finish_reason for c in response.choices]
+                }
+                got_response = True
+            
+            except Exception:
+
+                got_response = False
+
+        return response_dict
     
 class Gemini(LLModel):
 
@@ -177,10 +194,10 @@ class Gemini(LLModel):
         giveup=lambda e: "429" not in str(e),
         on_backoff=log_backoff
     )
-    def ask(self, instructions: str, context: Optional[str] = None, **generation_config) -> dict[str, list|str]:
+    def ask(self, instructions: str, context: Optional[str] = None, **generation_config) -> dict[str, list]:
 
 
-        default_config = GEMENI_GENERATION_CONFIG
+        default_config = GEMINI_GENERATION_CONFIG.copy()
         default_config.update(generation_config)
 
         config = google.genai.types.GenerateContentConfig(

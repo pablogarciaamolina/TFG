@@ -29,7 +29,7 @@ class CICIDS2017(TabularDataset):
         """
 
         # Config
-        self.default_config = CICIDS2017_DEFAULT_CONFIG
+        self.default_config = CICIDS2017_DEFAULT_CONFIG.copy()
         self.default_config.update(kwargs)
 
         # Routes

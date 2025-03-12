@@ -6,6 +6,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, classification_report
+from google.genai import Client
+from mistralai import Mistral
 
 from src.models._base import BaseModel
 from src.models.trainable._base import SklearnTrainableModel
@@ -126,8 +128,6 @@ class TAPipeline(BasePipeline):
     Tabular-API Pipeline with Majority Voting
     """
 
-    model: LLModel
-
     def __init__(self, model: LLModel):
         super().__init__(model)
     
@@ -168,7 +168,16 @@ class TAPipeline(BasePipeline):
             A dictionary containing the metrics and a figure with the report.
         """
 
-        preds = self.model.predict(icl_data, x_test, task, class_column, candidate_count=num_predictions)
+        if isinstance(self.model, Mistral):
+            config = {
+                "n": num_predictions
+            }
+        elif isinstance(self.model, Client):
+            config = {
+                "candidate_count": num_predictions
+            }
+
+        preds = self.model.predict(icl_data, x_test, task, class_column, **config)
         
         final_preds = self.majority_vote(preds)
 
