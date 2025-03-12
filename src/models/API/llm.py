@@ -170,8 +170,9 @@ class Mistral(LLModel):
                 }
                 got_response = True
             
-            except Exception:
+            except Exception as e:
 
+                logging.warning(f'No response obtained: {e}. Trying again')
                 got_response = False
 
         return response_dict
@@ -219,8 +220,9 @@ class Gemini(LLModel):
                 }
                 got_response = True
             
-            except Exception:
+            except Exception as e:
 
+                logging.warning(f'No response obtained: {e}. Trying again')
                 got_response = False
 
         return response_dict
