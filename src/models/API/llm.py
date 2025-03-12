@@ -1,3 +1,4 @@
+import time
 from abc import abstractmethod
 from typing import Any, Optional
 import logging
@@ -93,6 +94,7 @@ class LLModel(BaseModel):
         for i, test_input in enumerate(test_inputs):
             logging.info(f'Prediction nº{i+1}...')
             instructions = pre_instruction + test_input + "\n" + last_instruction
+            context = f"Request ID: {time.time()}\n" + context
             response = self.ask(instructions=instructions, context=context, **generation_config)
 
             model_output = []
