@@ -4,6 +4,9 @@ import os
 import logging
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
+
+from src.data.utils import balanced_sample
 
 class BaseDataset(ABC):
     """
@@ -93,3 +96,28 @@ class TabularDataset(BaseDataset):
             self._collect()
             self._preprocess()
             self._save()
+
+    def balance_(self, n: int, category_col: str = "Label") -> None:
+        """
+        Inplace method for balancing the data based on a categorical variable.
+
+        Args:
+            n: Number of samples per category
+            category_col: Column name of the categorical variable
+        """
+
+        self.data = balanced_sample(self.data, category_col=category_col, n_per_class=n)
+
+    def train_test_split(self, test_size: float) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        Draws train and test subsets splited randomly from the data
+
+        Args:
+            test_size: Float representing the proportion of the dataset to include in the test split
+
+        Returns:
+            train data and test data DataFrames
+        """
+
+        return train_test_split(self.data, test_size=test_size)
+

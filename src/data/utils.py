@@ -79,7 +79,7 @@ def balanced_sample(df: pd.DataFrame, category_col: str, n_per_class: int) -> pd
         df: DataFrame
         category_col: Column name of the categorical variable
         n_per_class: Number of samples per category
-    Return:
+    Returns:
         A balanced DataFrame sample
     """
     return df.groupby(category_col).apply(lambda x: x.sample(n=min(len(x), n_per_class))).reset_index(drop=True)
