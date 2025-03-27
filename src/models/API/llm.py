@@ -74,17 +74,16 @@ class LLModel(BaseModel):
         # Prepare few-shot context
         icl_inputs = jsonize_rows(icl_data.drop(columns=[class_column]))
         context = (
-            f"You are performing the following classification task: {task}\n\n"
+            f"You are performing the following classification task: {task}\n"
             "Here are some examples:\n"
         )
         for i, o in zip(icl_inputs, icl_data[class_column]):
             context += str({"Input": i, "Output": o}) + "\n"
-        context += "Where Output is the classification label for each data entry."
+        context += "\n Where Output is the classification label for each data entry.\n"
         
         # Define instructions
         pre_instruction = "Classify the following input and provide the corresponding Output:\n"
         last_instruction = (
-            # f"Your answer must be exactly one of the following labels: {', '.join(possible_labels)}.\n"
             "Ensure you provide only the raw Output and nothing else."
         )
         
@@ -93,15 +92,15 @@ class LLModel(BaseModel):
         test_inputs = jsonize_rows(test_data)
         for i, test_input in enumerate(test_inputs):
             logging.info(f'Prediction nº{i+1}...')
-            instructions = pre_instruction + test_input + "\n" + last_instruction
-            context = f"Request ID: {time.time()}\n" + context
+            input_instruction = str({"Input": test_input})
+            instructions = pre_instruction + input_instruction + "\n" + last_instruction
+            context = f"Request ID: {time.time()}\n" + context            
             response = self.ask(instructions=instructions, context=context, **generation_config)
 
             model_output = []
             for candidate in response["answer"]:
                 response_text = candidate.strip()
             
-                # Look for a valid label in the response
                 output = None
                 for label in possible_labels:
                     if label in response_text:

@@ -197,6 +197,7 @@ class TAPipeline(BasePipeline):
             other_info = other_info + f", majority voting with {num_predictions} predictions"
         else:
             other_info = f"majority voting with {num_predictions} predictions"
+
         results = self.evaluate_given_predictions(
             final_preds,
             y_test,
