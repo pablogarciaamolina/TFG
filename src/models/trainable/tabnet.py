@@ -210,8 +210,9 @@ def data_augmentation(x: np.ndarray, y: np.ndarray, threshold: Optional[float], 
         label_counts = dict(Counter(label_counts) + Counter(new_label_counts))
         augmentation_classes = [label for label, count in label_counts.items() if count < threshold_value]
 
-    label_counts = {k: int(c) for k, c in label_counts.items()}
-    logging.info("Final counts after Data Augmentation:\n%s", pformat(label_counts))
+    unique_classes, counts = np.unique(augmented_y, return_counts=True)
+    class_counts = {cls: int(count) for cls, count in zip(unique_classes, counts)}
+    logging.info("Final counts after Data Augmentation:\n%s", pformat(class_counts))
 
     return augmented_x.cpu().numpy(), augmented_y
 
