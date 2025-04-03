@@ -21,10 +21,6 @@
 
 ## MODELS
 
-- Implement Data Augmentation for TAbNet Model:
-    - The augmentation will be done to the classes that present less data (set in the configuration by a threshold with respect to the maximum)
-    - The each augmentation will duplicate the number of examples for a given class, this will be done a limited amout of times (set in the configuration)
-
 ## PIPELINE
 
 # Other
