@@ -5,6 +5,12 @@ ML_SAVING_PATH = os.path.join("models", "ml")
 TABNET_SAVING_PATH = os.path.join("models", "tabnet")
 
 # TABNET
+TABNET_DATA_AUGMENTATION_CONFIG = {
+    "class_samples_threshold": 0.4,
+    "n": 5,
+    "alpha":  0.7,
+    "beta": 0.3
+}
 TABNET_PRETRAINER_CONFIG = {
     "n_d": 10,
     "n_a": 10,
