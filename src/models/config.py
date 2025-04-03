@@ -7,10 +7,11 @@ TABNET_SAVING_PATH = os.path.join("models", "tabnet")
 # TABNET
 TABNET_DATA_AUGMENTATION_CONFIG = {
     "class_samples_threshold": 0.4,
-    "n": 5,
+    "n": 3,
     "alpha":  0.7,
     "beta": 0.3
 }
+
 TABNET_PRETRAINER_CONFIG = {
     "n_d": 10,
     "n_a": 10,
@@ -26,7 +27,7 @@ TABNET_PRETRAINER_CONFIG = {
 TABNET_PRETRAINING_PARAMS = {
     "max_epochs": 100,
     "batch_size": 1024,
-    "patience": 10,  # Early stopping patience
+    "patience": 10,
 }
 
 TABNET_CONFIG = {
@@ -47,7 +48,7 @@ TABNET_TRAINING_PARAMS = {
     "eval_metric": ["accuracy"],
     "max_epochs": 200,
     "batch_size": 1024,
-    "patience": 20,  # Higher patience for training
+    "patience": 20,
 }
 
 
