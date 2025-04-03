@@ -91,9 +91,9 @@ class TTPipeline(BasePipeline):
     def train(self,
         x_train,
         y_train,
-        cv: int = 10,
         x_val = None,
-        y_val = None
+        y_val = None,
+        cv: int = 10,
     ) -> None:
         
         if isinstance(self.model, TabNetModel):
