@@ -94,10 +94,11 @@ class TTPipeline(BasePipeline):
         x_val = None,
         y_val = None,
         cv: int = 10,
+        augmentation: bool = True
     ) -> None:
         
         if isinstance(self.model, TabNetModel):
-            self.model.fit(x_train, y_train, x_val, y_val)
+            self.model.fit(x_train, y_train, x_val, y_val, augmentation=augmentation)
         elif isinstance(self.model, MLClassifier):
             self.model.fit(x_train, y_train, cv=cv, verbose=1)
 
