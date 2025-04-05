@@ -10,8 +10,7 @@ from sklearn.metrics import accuracy_score, classification_report
 from src.models._base import BaseModel
 from src.models.trainable._base import SklearnTrainableModel
 from src.models.API.llm import LLModel, Mistral, Gemini
-from src.models.trainable.tabnet import TabNetModel
-from src.models.trainable.ml import MLClassifier
+from src.models.trainable import TabNetModel, TabPFNModel, MLClassifier
 
 class BasePipeline(ABC):
 
@@ -101,6 +100,8 @@ class TTPipeline(BasePipeline):
             self.model.fit(x_train, y_train, x_val, y_val, augmentation=augmentation)
         elif isinstance(self.model, MLClassifier):
             self.model.fit(x_train, y_train, cv=cv, verbose=1)
+        elif isinstance(self.model, TabPFNModel):
+            self.model.fit(x_train, y_train)
 
     def evaluate(self, x_test, y_test, other_info: str = None) -> dict:
         """

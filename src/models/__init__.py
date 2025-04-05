@@ -5,7 +5,8 @@ from .trainable import (
     PreConfigured_KNeighbors,
     PreConfigured_LinearSVC,
     PreConfigured_LogisticRegression,
-    PreConfigured_RandomForest
+    PreConfigured_RandomForest,
+    TabPFNModel
 )
 
 from .API import Gemini, Mistral

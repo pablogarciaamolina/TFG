@@ -3,6 +3,7 @@ import torch
 
 ML_SAVING_PATH = os.path.join("models", "ml")
 TABNET_SAVING_PATH = os.path.join("models", "tabnet")
+TABPFN_SAVING_PATH = os.path.join("models", "tabpfn")
 
 # TABNET
 TABNET_DATA_AUGMENTATION_CONFIG = {
@@ -51,7 +52,6 @@ TABNET_TRAINING_PARAMS = {
     "patience": 20,
 }
 
-
 # ML MODELS
 LOGISTIC_REGRESSION_CONFIG = {
     "multi_class": "multinomial",
@@ -80,6 +80,33 @@ DECISION_TREE_CONFIG = {
     "max_depth": 8
 }
 
+# TabPFN
+TABPFN_CONFIG = {
+    "n_estimators": 4,
+    "balance_probabilities": False,
+    "average_before_softmax": False,
+    "device": "auto",
+    "ignore_pretraining_limits": True,
+    "inference_precision": "auto",
+    "fit_mode": "fit_preprocessors",
+    "memory_saving_mode": "auto",
+    "random_state": 0,
+    "n_jobs": -1,
+}
+TABPFN_EXPERT_CONFIG = {
+    "CLASS_SHIFT_METHOD": "shuffle",
+    "FEATURE_SHIFT_METHOD": "shuffle",
+    "FINGERPRINT_FEATURE": True,
+    "MAX_NUMBER_OF_CLASSES": 15, # !!
+    "MAX_NUMBER_OF_FEATURES": 500,
+    "MAX_NUMBER_OF_SAMPLES": 10000,
+    "MAX_UNIQUE_FOR_CATEGORICAL_FEATURES": 30,
+    "MIN_UNIQUE_FOR_NUMERICAL_FEATURES": 4,
+    "OUTLIER_REMOVAL_STD": "auto",
+    "POLYNOMIAL_FEATURES": 'no',
+    "SUBSAMPLE_SAMPLES": None,
+    "USE_SKLEARN_16_DECIMAL_PRECISION": False
+}
 
 # LLMs
 MISTRAL_API_KEY = os.environ["MISTRAL_API_KEY"]

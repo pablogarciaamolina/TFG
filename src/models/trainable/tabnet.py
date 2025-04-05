@@ -36,13 +36,10 @@ class TabNetModel(SklearnTrainableModel):
 
         Args:
             x_train: Training data features
-            y_train: Trianing datat labels
+            y_train: Training datat labels
             x_val: Optional validation data features
             y_val: Optional validation data labels
             augmentation: Whether to perform data augmentation or not
-
-        Return:
-            The training and validation accuracy final metrics for the model
         """
 
         # Data Augmentation
@@ -81,9 +78,9 @@ class TabNetModel(SklearnTrainableModel):
             from_unsupervised=self.pretrainer,
         )
     
-    def predict(self, X) -> np.ndarray:
+    def predict(self, x) -> np.ndarray:
 
-        return self.model.predict(X)
+        return self.model.predict(x)
 
     def plot_metrics(self) -> None:
         """
