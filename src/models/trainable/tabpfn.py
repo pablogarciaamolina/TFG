@@ -3,8 +3,10 @@ import numpy as np
 import logging
 import joblib
 
+from sklearn.preprocessing import LabelEncoder
 from tabpfn import TabPFNClassifier
 from tabpfn.config import ModelInterfaceConfig
+from tabpfn_extensions.many_class import ManyClassClassifier
 
 from ._base import SklearnTrainableModel
 from src.models.config import TABPFN_CONFIG, TABPFN_SAVING_PATH, TABPFN_EXPERT_CONFIG
@@ -20,6 +22,9 @@ class TabPFNModel(SklearnTrainableModel):
         model = TabPFNClassifier(**TABPFN_CONFIG, inference_config=expert_config)
         super().__init__(name, model)
 
+        self.extension = None
+        self.label_encoder = LabelEncoder()
+
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray) -> None:
         """
@@ -31,10 +36,27 @@ class TabPFNModel(SklearnTrainableModel):
         """
 
         logging.info("Fitting TabPNF model...")
-        self.model.fit(
-            x_train,
-            y_train
-        )
+
+        if len(np.unique(y_train)) > TABPFN_EXPERT_CONFIG["MAX_NUMBER_OF_CLASSES"]:
+            self.extension = ManyClassClassifier(
+                self.model,
+                alphabet_size=TABPFN_EXPERT_CONFIG["MAX_NUMBER_OF_CLASSES"]
+            )
+
+        y_train = self.label_encoder.fit_transform(y_train)
+        
+        if self.extension is None:
+            logging.info("Training base TabPFN model")
+            self.model.fit(
+                x_train,
+                y_train
+            )
+        else:
+            logging.info("Training ManyClassClassifier extension")
+            self.extension.fit(
+                x_train,
+                y_train
+            )
 
 
     def predict(self, x: np.ndarray) -> np.ndarray:
@@ -45,19 +67,34 @@ class TabPFNModel(SklearnTrainableModel):
             x: Iputs for which to predict the labels
         """
 
-        return self.model.predict(x)
+        logging.info("TabPFN predicting labels...")
+
+        if self.extension is None:
+            predictions = self.model.predict(x) 
+        else:
+            predictions = self.extension.predict_proba(x)
+            predictions = self.extension.classes_[np.argmax(predictions, axis=1)]
+
+        return self.label_encoder.inverse_transform(predictions)
     
 
     def save(self):
         
-        logging.info(f'Saving model...')
+        logging.info(f"Saving model...")
 
         filepath = os.path.join(TABPFN_SAVING_PATH, self.name + ".zip")
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)        
-        joblib.dump(self.model, filepath)
-        logging.info(f'Model saved to {filepath}')
-    
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
+        save_dict = {
+            "model": self.model,
+            "extension": self.extension,
+            "label_encoder": self.label_encoder,
+        }
+
+        joblib.dump(save_dict, filepath)
+        logging.info(f"Model and components saved to {filepath}")
+
+    
     def load(self):
         
         logging.info(f'Loading model...')
@@ -65,8 +102,13 @@ class TabPFNModel(SklearnTrainableModel):
         filepath = os.path.join(TABPFN_SAVING_PATH, self.name + ".zip")
         if not os.path.exists(filepath):
             raise FileNotFoundError(f"Model file '{filepath}' not found.")
-        
-        self.model = joblib.load(filepath)
-        self.model.device = "auto"
-        logging.info(f'Model loaded from {filepath}')
+
+        save_dict = joblib.load(filepath)
+        self.model = save_dict["model"]
+        self.extension = save_dict["extension"]
+        self.label_encoder = save_dict["label_encoder"]
+
+        if hasattr(self.model, "device"):
+            self.model.device = "auto"
+
     

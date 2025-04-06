@@ -62,7 +62,7 @@ class BasePipeline(ABC):
 
         # Generate heatmap report
         fig, ax = plt.subplots(figsize=(14, 6))
-        sns.heatmap(data, cmap='Pastel1', annot=True, fmt='.2f', xticklabels=classes, yticklabels=['Precision', 'Recall', 'F1-score'], ax=ax)
+        sns.heatmap(data, cmap='Pastel1', annot=True, fmt='.2f', xticklabels=classes, yticklabels=['Precision', 'Recall', 'F1-score'], ax=ax, annot_kws={"color": "black"})
         ax.set_title(f'Metrics Report ({self.model.name}{" - " + other_info if other_info is not None else ""})')
         fig.tight_layout()
 

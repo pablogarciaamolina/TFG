@@ -7,8 +7,8 @@ TABPFN_SAVING_PATH = os.path.join("models", "tabpfn")
 
 # TABNET
 TABNET_DATA_AUGMENTATION_CONFIG = {
-    "class_samples_threshold": 0.4,
-    "n": 3,
+    "class_samples_threshold": 0.3,
+    "n": 10,
     "alpha":  0.7,
     "beta": 0.3
 }
@@ -93,11 +93,11 @@ TABPFN_CONFIG = {
     "random_state": 0,
     "n_jobs": -1,
 }
-TABPFN_EXPERT_CONFIG = {
+TABPFN_EXPERT_CONFIG = { # IT IS RECOMMENDED TO NOT CHANGE THIS PARAMETERS
     "CLASS_SHIFT_METHOD": "shuffle",
     "FEATURE_SHIFT_METHOD": "shuffle",
     "FINGERPRINT_FEATURE": True,
-    "MAX_NUMBER_OF_CLASSES": 15, # !!
+    "MAX_NUMBER_OF_CLASSES": 10, # !!
     "MAX_NUMBER_OF_FEATURES": 500,
     "MAX_NUMBER_OF_SAMPLES": 10000,
     "MAX_UNIQUE_FOR_CATEGORICAL_FEATURES": 30,
