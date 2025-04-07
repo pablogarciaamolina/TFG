@@ -80,7 +80,7 @@ DECISION_TREE_CONFIG = {
     "max_depth": 8
 }
 
-# TabPFN
+# TABPFN
 TABPFN_CONFIG = {
     "n_estimators": 4,
     "balance_probabilities": False,
@@ -109,8 +109,8 @@ TABPFN_EXPERT_CONFIG = { # IT IS RECOMMENDED TO NOT CHANGE THIS PARAMETERS
 }
 
 # LLMs
-MISTRAL_API_KEY = os.environ["MISTRAL_API_KEY"]
-GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY", None)
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", None)
 
 BACKOFF_MAX_TRIES = 15
 BACKOFF_FACTOR = 2
