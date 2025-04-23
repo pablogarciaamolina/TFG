@@ -89,7 +89,7 @@ TABPFN_CONFIG = {
     "ignore_pretraining_limits": True,
     "inference_precision": "auto",
     "fit_mode": "fit_preprocessors",
-    "memory_saving_mode": "auto",
+    "memory_saving_mode": True,
     "random_state": 0,
     "n_jobs": -1,
 }
@@ -106,6 +106,9 @@ TABPFN_EXPERT_CONFIG = { # IT IS RECOMMENDED TO NOT CHANGE THIS PARAMETERS
     "POLYNOMIAL_FEATURES": 'no',
     "SUBSAMPLE_SAMPLES": None,
     "USE_SKLEARN_16_DECIMAL_PRECISION": False
+}
+TABPFN_PARAMS = {
+    "predicting_batch_size": 2048 # -1 for one batch (no batch predicting)
 }
 
 # LLMs

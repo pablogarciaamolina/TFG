@@ -9,7 +9,7 @@ from tabpfn.config import ModelInterfaceConfig
 from tabpfn_extensions.many_class import ManyClassClassifier
 
 from ._base import SklearnTrainableModel
-from src.models.config import TABPFN_CONFIG, TABPFN_SAVING_PATH, TABPFN_EXPERT_CONFIG
+from src.models.config import TABPFN_CONFIG, TABPFN_SAVING_PATH, TABPFN_EXPERT_CONFIG, TABPFN_PARAMS
 
 
 class TabPFNModel(SklearnTrainableModel):
@@ -61,7 +61,7 @@ class TabPFNModel(SklearnTrainableModel):
 
     def predict(self, x: np.ndarray) -> np.ndarray:
         """
-        Predicts labels for the given inputs
+        Predicts labels for the given inputs, using batches.
 
         Args:
             x: Iputs for which to predict the labels
@@ -69,11 +69,22 @@ class TabPFNModel(SklearnTrainableModel):
 
         logging.info("TabPFN predicting labels...")
 
-        if self.extension is None:
-            predictions = self.model.predict(x) 
-        else:
-            predictions = self.extension.predict_proba(x)
-            predictions = self.extension.classes_[np.argmax(predictions, axis=1)]
+        assert isinstance(TABPFN_PARAMS["predicting_batch_size"], int) and TABPFN_PARAMS["predicting_batch_size"] > 0
+        batch_size = x.shape[0] if TABPFN_PARAMS["predicting_batch_size"] == -1 else TABPFN_PARAMS["predicting_batch_size"]
+
+        logging.info(f"Starting batch prediction with batch size of {batch_size}... (Total of {x.shape[0]} samples to predict)")
+        preds = []
+        for i in range(0, x.shape[0], batch_size):
+            if self.extension is None:
+                predictions = self.model.predict(x[i:i+batch_size]) 
+            else:
+                predictions = self.extension.predict_proba(x[i:i+batch_size])
+                predictions = self.extension.classes_[np.argmax(predictions, axis=1)]
+
+            preds.append(predictions)
+            logging.info(f"{i + batch_size} samples predicted")
+
+        predictions = np.concatenate(preds)
 
         return self.label_encoder.inverse_transform(predictions)
     
