@@ -108,7 +108,7 @@ TABPFN_EXPERT_CONFIG = { # IT IS RECOMMENDED TO NOT CHANGE THIS PARAMETERS
     "USE_SKLEARN_16_DECIMAL_PRECISION": False
 }
 TABPFN_PARAMS = {
-    "predicting_batch_size": 2048 # -1 for one batch (no batch predicting)
+    "predicting_batch_size": 20000 # -1 for one batch (no batch predicting)
 }
 
 # LLMs

@@ -69,8 +69,8 @@ class TabPFNModel(SklearnTrainableModel):
 
         logging.info("TabPFN predicting labels...")
 
-        assert isinstance(TABPFN_PARAMS["predicting_batch_size"], int) and TABPFN_PARAMS["predicting_batch_size"] > 0
         batch_size = x.shape[0] if TABPFN_PARAMS["predicting_batch_size"] == -1 else TABPFN_PARAMS["predicting_batch_size"]
+        assert isinstance(TABPFN_PARAMS["predicting_batch_size"], int) and TABPFN_PARAMS["predicting_batch_size"] > 0
 
         logging.info(f"Starting batch prediction with batch size of {batch_size}... (Total of {x.shape[0]} samples to predict)")
         preds = []
