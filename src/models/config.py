@@ -55,15 +55,22 @@ TABNET_TRAINING_PARAMS = {
 # ML MODELS
 LOGISTIC_REGRESSION_CONFIG = {
     "multi_class": "multinomial",
-    "max_iter": 15000, "solver": 'sag',
+    "max_iter": 15000,
+    "solver": 'sag',
     "C": 100,
     "random_state": 0
 }
 
 LINEAR_SVC_CONFIG = {
-    "C": 1,
+    "C": 0.8,
     "random_state": 0,
+    "kernel": "poly",
+    "gamma": "auto",
+    "degree": 3,
+    "tol": 1e-2,
+    "max_iter": 5000,
 }
+
 
 RANDOM_FOREST_CONFIG = {
     "n_estimators": 15, 

@@ -8,7 +8,7 @@ from sklearn.model_selection import cross_val_score, StratifiedKFold
 from ._base import SklearnTrainableModel
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -92,10 +92,10 @@ class PreConfigured_LogisticRegression(MLClassifier):
     def __init__(self):
         super().__init__(LogisticRegression, "logistic_regression", **LOGISTIC_REGRESSION_CONFIG)
 
-class PreConfigured_LinearSVC(MLClassifier):
+class PreConfigured_SVC(MLClassifier):
 
     def __init__(self):
-        super().__init__(LinearSVC, "svc", **LINEAR_SVC_CONFIG)
+        super().__init__(SVC, "svc", **LINEAR_SVC_CONFIG)
 
 class PreConfigured_RandomForest(MLClassifier):
 
