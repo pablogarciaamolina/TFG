@@ -64,8 +64,6 @@ LOGISTIC_REGRESSION_CONFIG = {
 LINEAR_SVC_CONFIG = {
     "C": 0.8,
     "random_state": 0,
-    "kernel": "poly",
-    "gamma": "auto",
     "degree": 3,
     "tol": 1e-2,
     "max_iter": 5000,
