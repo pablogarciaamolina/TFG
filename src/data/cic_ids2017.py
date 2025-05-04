@@ -111,7 +111,7 @@ class CICIDS2017(TabularDataset):
         logging.info("Duplicates dropped.")
 
         # Infinite values
-        ## Replacing with NaN is a good answer ?? (Shaould check the feature, infinity might have a meaning)
+        ## Replacing with NaN is a good answer ?? (Should check the feature, infinity might have a meaning)
         # maybe dropping might be better ??
         self.data.replace([np.inf, -np.inf], np.nan, inplace = True)
 
@@ -152,7 +152,6 @@ class CICIDS2017(TabularDataset):
         num_unique = self.data.nunique()
         one_variable = num_unique[num_unique == 1]
         not_one_variable = num_unique[num_unique > 1].index
-        dropped_cols = one_variable.index
         self.data = self.data[not_one_variable]
         logging.info(f"Dropped columns with one unique value: {list(one_variable.index)}")
 
