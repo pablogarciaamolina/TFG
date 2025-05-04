@@ -99,9 +99,9 @@ class TTPipeline(BasePipeline):
         
         # Data Augmentation
         if augmentation:
-            x, y = smote(
-                x,
-                y,
+            x_train, y_train = smote(
+                x_train,
+                y_train,
             )
 
         if isinstance(self.model, TabNetModel):
