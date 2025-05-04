@@ -61,7 +61,6 @@ LINEAR_SVC_CONFIG = {
     "max_iter": 5000,
 }
 
-
 RANDOM_FOREST_CONFIG = {
     "n_estimators": 15, 
     "max_depth": 8, 
