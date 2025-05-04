@@ -1,10 +1,11 @@
 DATA_DIR = "data"
 ANALYSIS_PATH = "results"
 
+# CIC-IDS2017
 EXTENDED_CIC_IDS2017_URL = "http://205.174.165.80/CICDataset/CIC-IDS-2017/Dataset/CIC-IDS-2017/CSVs/GeneratedLabelledFlows.zip"
 CIC_IDS2017_URL = "http://205.174.165.80/CICDataset/CIC-IDS-2017/Dataset/CIC-IDS-2017/CSVs/MachineLearningCSV.zip"
 
-CLASSES_MAPPING = {
+CIC_IDS2017_CLASSES_MAPPING = {
     'BENIGN': 'BENIGN',
     'DDoS': 'DDoS',
     'DoS Hulk': 'DoS',
@@ -27,6 +28,7 @@ CICIDS2017_DEFAULT_CONFIG = {
     "classes_mapping": True
 }
 
+# UTILS
 SMOTE_CONFIG = {
     "class_samples_threshold": 0.3,
     "n": 10,
