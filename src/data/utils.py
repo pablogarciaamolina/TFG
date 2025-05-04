@@ -121,7 +121,7 @@ def encode_labels(data: pd.DataFrame, label_col: str) -> tuple[np.ndarray]:
 
     return x, y
 
-def smote(x: np.ndarray, y: np.ndarray, threshold: Optional[float], n: Optional[int]) -> tuple[np.ndarray, np.ndarray]:
+def smote(x: np.ndarray, y: np.ndarray, threshold: Optional[float] = None, n: Optional[int] = None) -> tuple[np.ndarray, np.ndarray]:
     """
     Specifically for DL model, initiall conceived for TabNET. Performs data augmentation for clasification using a modified version of SMOTE.
 
