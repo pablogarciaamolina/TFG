@@ -7,6 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, classification_report
 
+from src.data.utils import smote
 from src.models._base import BaseModel
 from src.models.trainable._base import SklearnTrainableModel
 from src.models.API.llm import LLModel, Mistral, Gemini
@@ -88,14 +89,21 @@ class TTPipeline(BasePipeline):
         super().__init__(model)
 
     def train(self,
-        x_train,
-        y_train,
+        x_train: np.ndarray,
+        y_train: np.ndarray,
         x_val = None,
         y_val = None,
         cv: int = 10,
-        augmentation: bool = True
+        augmentation: bool = False
     ) -> None:
         
+        # Data Augmentation
+        if augmentation:
+            x, y = smote(
+                x,
+                y,
+            )
+
         if isinstance(self.model, TabNetModel):
             self.model.fit(x_train, y_train, x_val, y_val, augmentation=augmentation)
         elif isinstance(self.model, MLClassifier):

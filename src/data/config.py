@@ -26,3 +26,10 @@ CICIDS2017_DEFAULT_CONFIG = {
     "pca": True,
     "classes_mapping": True
 }
+
+SMOTE_CONFIG = {
+    "class_samples_threshold": 0.3,
+    "n": 10,
+    "alpha":  0.7,
+    "beta": 0.3
+}
