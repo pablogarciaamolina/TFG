@@ -72,7 +72,7 @@ class TabPFNModel(SklearnTrainableModel):
         batch_size = x.shape[0] if TABPFN_PARAMS["predicting_batch_size"] == -1 else TABPFN_PARAMS["predicting_batch_size"]
         assert isinstance(batch_size, int) and batch_size > 0
 
-        logging.info(f"Starting batch prediction with batch size of {max(batch_size, x.shape[0])}... (Total of {x.shape[0]} samples to predict)")
+        logging.info(f"Starting batch prediction with batch size of {min(batch_size, x.shape[0])}... (Total of {x.shape[0]} samples to predict)")
         preds = []
         for i in range(0, x.shape[0], batch_size):
             if self.extension is None:
@@ -82,7 +82,7 @@ class TabPFNModel(SklearnTrainableModel):
                 predictions = self.extension.classes_[np.argmax(predictions, axis=1)]
 
             preds.append(predictions)
-            logging.info(f"{max(i + batch_size, x.shape[0])} samples predicted")
+            logging.info(f"{min(i + batch_size, x.shape[0])} samples predicted")
 
         predictions = np.concatenate(preds)
 
