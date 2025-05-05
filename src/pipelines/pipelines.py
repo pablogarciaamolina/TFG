@@ -26,18 +26,18 @@ class TTPipeline(BasePipeline):
         x_val = None,
         y_val = None,
         cv: int = 10,
-        augmentation: bool = False
+        smote_augmentation: bool = False
     ) -> None:
         
         # Data Augmentation
-        if augmentation:
+        if smote_augmentation:
             x_train, y_train = smote(
                 x_train,
                 y_train,
             )
 
         if isinstance(self.model, TabNetModel):
-            self.model.fit(x_train, y_train, x_val, y_val, augmentation=augmentation)
+            self.model.fit(x_train, y_train, x_val, y_val)
         elif isinstance(self.model, MLClassifier):
             self.model.fit(x_train, y_train, cv=cv, verbose=1)
         elif isinstance(self.model, TabPFNModel):
