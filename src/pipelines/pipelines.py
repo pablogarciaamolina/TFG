@@ -3,7 +3,7 @@ from collections import Counter
 
 import pandas as pd
 
-from src.data.utils import smote
+from src.data import smote
 from src.models.trainable._base import SklearnTrainableModel
 from src.models.API.llm import LLModel, Mistral, Gemini
 from src.models.trainable import TabNetModel, TabPFNModel, MLClassifier
