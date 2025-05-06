@@ -28,10 +28,41 @@ CICIDS2017_DEFAULT_CONFIG = {
     "classes_mapping": True
 }
 
-# UTILS
+# DATA AUGMENTATION
 SMOTE_CONFIG = {
     "class_samples_threshold": 0.3,
     "n": 10,
     "alpha":  0.7,
     "beta": 0.3
+}
+
+TABPFN_DATA_GENERATOR_CONFIG = {
+    "class_samples_threshold": 0.3,
+    "t": 1,
+    "n_permutations": 3
+}
+TABPFN_DATA_GENERATOR_MODEL_CONFIG = {
+    "n_estimators": 1,
+    "average_before_softmax": False,
+    "device": "cuda",
+    "ignore_pretraining_limits": True,
+    "inference_precision": "auto",
+    "fit_mode": "fit_preprocessors",
+    "memory_saving_mode": True,
+    "random_state": 0,
+    "n_jobs": -1,
+}
+TABPFN_DATA_GENERATOR_EXPERT_MODEL_CONFIG = { # IT IS RECOMMENDED TO NOT CHANGE THIS PARAMETERS
+    "CLASS_SHIFT_METHOD": "shuffle",
+    "FEATURE_SHIFT_METHOD": "shuffle",
+    "FINGERPRINT_FEATURE": True,
+    "MAX_NUMBER_OF_CLASSES": 10,
+    "MAX_NUMBER_OF_FEATURES": 500,
+    "MAX_NUMBER_OF_SAMPLES": 10000,
+    "MAX_UNIQUE_FOR_CATEGORICAL_FEATURES": 30,
+    "MIN_UNIQUE_FOR_NUMERICAL_FEATURES": 4,
+    "OUTLIER_REMOVAL_STD": "auto",
+    "POLYNOMIAL_FEATURES": 'no',
+    "SUBSAMPLE_SAMPLES": None,
+    "USE_SKLEARN_16_DECIMAL_PRECISION": False
 }

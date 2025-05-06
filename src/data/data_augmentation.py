@@ -5,8 +5,119 @@ from collections import Counter
 from typing import Optional
 
 import torch
+from sklearn.preprocessing import LabelEncoder
+from tabpfn import TabPFNClassifier, TabPFNRegressor
+from tabpfn.config import ModelInterfaceConfig
+from tabpfn_extensions.unsupervised import TabPFNUnsupervisedModel
 
-from src.data.config import SMOTE_CONFIG
+from src.data.config import SMOTE_CONFIG, TABPFN_DATA_GENERATOR_MODEL_CONFIG, TABPFN_DATA_GENERATOR_EXPERT_MODEL_CONFIG, TABPFN_DATA_GENERATOR_CONFIG
+
+class TabPFNDataGenerator:
+    """
+    Synthetic data generator based on TabPFN model
+    """
+
+    generator: TabPFNUnsupervisedModel
+
+    def __init__(self):
+        
+        self.tabpfn_clf = TabPFNClassifier(
+            **TABPFN_DATA_GENERATOR_MODEL_CONFIG,
+            inference_config = ModelInterfaceConfig(
+                **TABPFN_DATA_GENERATOR_EXPERT_MODEL_CONFIG
+            )
+        )
+        self.tabpfn_regr = TabPFNRegressor(
+            **TABPFN_DATA_GENERATOR_MODEL_CONFIG,
+            inference_config = ModelInterfaceConfig(
+                **TABPFN_DATA_GENERATOR_EXPERT_MODEL_CONFIG
+            )
+        )
+
+        self.fitted = False
+        self.label_encoder = LabelEncoder()
+
+    def generate(self, n_samples: int, x: Optional[np.ndarray] = None, y: Optional[np.ndarray] = None, threshold: Optional[float] = None) -> tuple[np.ndarray, np.ndarray]:
+        """
+        Generates `n_samples` of data based on the provided data to be fitted.
+
+        Following the configuration of the generator, data is synthetically produced. Not all classes are generated, only those with a number of samples relative to the `threshold` 
+        value and the amount of samples of the predominant class. The classes of the samples generated are random.
+
+        Once fitted it can be used to generate more samples without needing more examples.
+
+        Args:
+            n_smaples: Number of samples to be generated
+            x: Features to fit the generator with
+            y: Classes to fit the generator with
+            threshold: Falctor that multiplies the max amount of samples in a class to determine the classes being augmented.
+        """
+
+        if not self.fitted:
+
+            assert x is not None and y is not None
+
+            unique_labels, counts = np.unique(y, return_counts=True)
+            max_n_samples = max(counts)
+
+            # Select classes to be augmented
+            if not threshold:
+                threshold = TABPFN_DATA_GENERATOR_CONFIG["class_samples_threshold"]
+            assert isinstance(threshold, float)
+            assert 0 < threshold <= 1
+
+            threshold_value = int(max_n_samples * threshold)
+            augmentation_classes = [label for label, count in dict(zip(unique_labels, counts)).items() if count <= threshold_value]
+
+            # Get the examples that are from the augmentation classes
+            mask = np.isin(y, augmentation_classes)
+            base_x = x[mask]
+            base_y = y[mask]
+            base_y = self.label_encoder.fit_transform(base_y)
+            base_combined = np.column_stack((base_x, base_y.reshape(-1, 1)))
+
+            # Create generator
+            n_classes = len(augmentation_classes)
+            assert n_classes <= TABPFN_DATA_GENERATOR_EXPERT_MODEL_CONFIG["MAX_NUMBER_OF_CLASSES"], "Number of classes to be augmented exceeded, try with a lower threshold value"
+
+            self.generator = TabPFNUnsupervisedModel(
+                tabpfn_clf=self.tabpfn_clf,
+                tabpfn_reg=self.tabpfn_regr
+            )
+
+            # Fit generator
+            logging.info("Fitting generator...")
+            logging.info(f"Classes to be fitted: {augmentation_classes}")
+            self.generator.fit(
+                torch.from_numpy(base_combined)
+            )
+
+            self.fitted = True
+
+        # Generate samples
+        logging.info(f"Generating {n_samples} samples...")
+        generated_samples: torch.Tensor = self.generator.generate_synthetic_data(
+            n_samples, t=TABPFN_DATA_GENERATOR_CONFIG["t"],
+            n_permutations=TABPFN_DATA_GENERATOR_CONFIG["n_permutations"]
+        ).numpy()
+
+        # Split back into features and labels
+        generated_x = generated_samples[:, :-1]  # All columns except last
+        generated_y = generated_samples[:, -1]   # Last column
+        
+        # Decode labels back to original values
+        generated_y = self.label_encoder.inverse_transform(generated_y.astype(int))
+
+        return generated_x, generated_y
+
+
+
+
+
+
+
+
+
 
 
 def smote(x: np.ndarray, y: np.ndarray, threshold: Optional[float] = None, n: Optional[int] = None) -> tuple[np.ndarray, np.ndarray]:
@@ -18,7 +129,7 @@ def smote(x: np.ndarray, y: np.ndarray, threshold: Optional[float] = None, n: Op
 
     Args:
         x: The features of the data.
-        y: The labels of the data associate dto the features.
+        y: The labels of the data associated to the features.
         threshold: The percentage that indicates whether to augment a class samples or not depending of the class with the most number of samples. (0, 1].
         n: The amount of times to augment the data.
 
