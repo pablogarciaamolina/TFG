@@ -9,7 +9,7 @@ from tabpfn.config import ModelInterfaceConfig
 from tabpfn_extensions.many_class import ManyClassClassifier
 
 from ._base import SklearnTrainableModel
-from src.models.config import TABPFN_CONFIG, TABPFN_SAVING_PATH, TABPFN_EXPERT_CONFIG, TABPFN_PARAMS
+from src.models.config import TABPFN_CONFIG, TABPFN_SAVING_PATH, TABPFN_EXPERT_CONFIG, TABPFN_PARAMS, TABPFN_MANY_CLASS_CONFIG
 
 
 class TabPFNModel(SklearnTrainableModel):
@@ -40,7 +40,7 @@ class TabPFNModel(SklearnTrainableModel):
         if len(np.unique(y_train)) > TABPFN_EXPERT_CONFIG["MAX_NUMBER_OF_CLASSES"]:
             self.extension = ManyClassClassifier(
                 self.model,
-                alphabet_size=TABPFN_EXPERT_CONFIG["MAX_NUMBER_OF_CLASSES"]
+                **TABPFN_MANY_CLASS_CONFIG
             )
 
         y_train = self.label_encoder.fit_transform(y_train)

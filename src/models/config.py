@@ -82,7 +82,7 @@ TABPFN_CONFIG = {
     "balance_probabilities": False,
     "average_before_softmax": False,
     "device": "auto",
-    "ignore_pretraining_limits": True,
+    "ignore_pretraining_limits": False,
     "inference_precision": "auto",
     "fit_mode": "fit_preprocessors",
     "memory_saving_mode": True,
@@ -93,15 +93,21 @@ TABPFN_EXPERT_CONFIG = { # IT IS RECOMMENDED TO NOT CHANGE THIS PARAMETERS
     "CLASS_SHIFT_METHOD": "shuffle",
     "FEATURE_SHIFT_METHOD": "shuffle",
     "FINGERPRINT_FEATURE": True,
-    "MAX_NUMBER_OF_CLASSES": 10, # !!
+    "MAX_NUMBER_OF_CLASSES": 10,
     "MAX_NUMBER_OF_FEATURES": 500,
-    "MAX_NUMBER_OF_SAMPLES": 10000,
+    "MAX_NUMBER_OF_SAMPLES": 100000,
     "MAX_UNIQUE_FOR_CATEGORICAL_FEATURES": 30,
     "MIN_UNIQUE_FOR_NUMERICAL_FEATURES": 4,
     "OUTLIER_REMOVAL_STD": "auto",
     "POLYNOMIAL_FEATURES": 'no',
     "SUBSAMPLE_SAMPLES": None,
     "USE_SKLEARN_16_DECIMAL_PRECISION": False
+}
+TABPFN_MANY_CLASS_CONFIG = {
+    "alphabet_size": 5, # Has to be <= than MAX_NUMBER_OF_CLASSES
+    "n_estimators": None, # None for automatic detection, int for  specific number
+    "n_estimators_redundancy": 4,
+    "random_state": 0
 }
 TABPFN_PARAMS = {
     "predicting_batch_size": 20000 # -1 for one batch (no batch predicting)
