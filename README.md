@@ -72,9 +72,7 @@ BaseDataset
 └── (other possible types)
 ```
 
-#### CIC-IDS2017
-
-...
+#### Configurations
 
 ### MODELS
 
@@ -158,10 +156,10 @@ Below one can find the configuration parameters for every model explained.
     - **random_state**: Used when solver` == 'sag', 'saga' or 'liblinear' to shuffle the data
 
 - ``LINEAR_SVC_CONFIG``
-    - **C**: Inverse of regularization strength; must be a positive float
-    - **random_state**: Used when solver` == 'sag', 'saga' or 'liblinear' to shuffle the data
+    - **C**: Regularization parameter. The strength of the regularization is inversely proportional to C.
+    - **random_state**: Controls the pseudo random number generation for shuffling the data for the dual coordinate descent.
     - **tol**: Tolerance for stopping criteria
-    - **max_iter**: Maximum number of iterations taken for the solvers to converge
+    - **max_iter**: Maximum number of iterations to be run.
 
 - ``RANDOM_FOREST_CONFIG``
     - **n_estimators**: The number of trees in the forest.
@@ -193,7 +191,7 @@ Below one can find the configuration parameters for every model explained.
     - **CLASS_SHIFT_METHOD**: The method used to shift classes during preprocessing for ensembling to emulate the effect of invariance to class order
     - **FEATURE_SHIFT_METHOD**: The method used to shift features during preprocessing for ensembling to emulate the effect of invariance to feature position
     - **FINGERPRINT_FEATURE**: Whether to add a fingerprint feature to the data
-    - **MAX_NUMBER_OF_CLASSES**: The number of classes seen during pretraining for classification / Size of the alphabet for the codebook
+    - **MAX_NUMBER_OF_CLASSES**: The number of classes seen during pretraining for classification.
     - **MAX_NUMBER_OF_FEATURES**: The number of features that the pretraining was intended for
     - **MAX_NUMBER_OF_SAMPLES**: The number of samples that the pretraining was intended for
     - **MAX_UNIQUE_FOR_CATEGORICAL_FEATURES**: The maximum number of unique values for a feature to be considered categorical
