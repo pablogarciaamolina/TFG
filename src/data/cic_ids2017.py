@@ -88,7 +88,7 @@ class CICIDS2017(TabularDataset):
             self._download()
     
         if not os.path.isfile(self.file_path):
-            logging.info(f"{self.file_path} not found. Creating dataset from individual CSV files in {self.data_dir}.")
+            logging.info(f"{self.file_path} not found. Creating dataset from individual CSV files in {self.raw_data_dir}.")
             self.data = concat_and_save_csv(self.raw_data_dir, self.file_name, encoding="latin-1", save_in_path=self.processed_data_dir, sep=",", return_df=True)
         else:
             self.data = pd.read_csv(self.file_path)
