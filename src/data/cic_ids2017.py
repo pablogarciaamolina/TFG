@@ -20,6 +20,7 @@ class CICIDS2017(TabularDataset):
 
     # extended_dataset_folder = os.path.join("TrafficLabelling_", "TrafficLabelling ")
     dataset_folder = "MachineLearningCVE"
+    processed_data_folder = "processed"
 
     def __init__(self, **kwargs):
         """
@@ -34,12 +35,13 @@ class CICIDS2017(TabularDataset):
 
         # Routes
         self.dataset_folder = self.dataset_folder
-        data_dir = os.path.abspath(os.path.join(DATA_DIR, "CIC-IDS2017", self.dataset_folder))
+        self.raw_data_dir = os.path.abspath(os.path.join(DATA_DIR, "CIC-IDS2017", self.dataset_folder))
+        self.processed_data_dir = os.path.abspath(os.path.join(DATA_DIR, "CIC-IDS2017", self.processed_data_folder))
         url = CIC_IDS2017_URL
 
         # Super
         name = self._get_id()
-        super().__init__(data_dir, f"{name}.csv", url)
+        super().__init__(self.processed_data_dir, f"{name}.csv", url)
         self.extended = False
 
     def _get_id(self) -> str:
@@ -55,8 +57,8 @@ class CICIDS2017(TabularDataset):
             logging.error("No URL provided for dataset download.")
             return
 
-        os.makedirs(self.data_dir, exist_ok=True)
-        zip_path = os.path.join(self.data_dir, os.path.basename(self.url))
+        os.makedirs(self.raw_data_dir, exist_ok=True)
+        zip_path = os.path.join(self.raw_data_dir, os.path.basename(self.url))
         
         logging.info(f"Downloading dataset from {self.url}...")
         response = requests.get(self.url, stream=True)
@@ -70,7 +72,7 @@ class CICIDS2017(TabularDataset):
                     filename = os.path.basename(member)
                     if filename:
                         with zip_ref.open(member) as source:
-                            target_path = os.path.join(self.data_dir, filename)
+                            target_path = os.path.join(self.raw_data_dir, filename)
                             with open(target_path, "wb") as target:
                                 target.write(source.read())
             os.remove(zip_path)
@@ -82,12 +84,12 @@ class CICIDS2017(TabularDataset):
         Retrieves and merges the raw dataset if a saved version does not exist.
         """
 
-        if not os.path.exists(self.file_path):
+        if not os.path.exists(self.processed_data_dir):
             self._download()
     
         if not os.path.isfile(self.file_path):
             logging.info(f"{self.file_path} not found. Creating dataset from individual CSV files in {self.data_dir}.")
-            self.data = concat_and_save_csv(self.data_dir, self.file_name, encoding="latin-1", save_in_path=True, sep=",", return_df=True)
+            self.data = concat_and_save_csv(self.raw_data_dir, self.file_name, encoding="latin-1", save_in_path=self.processed_data_dir, sep=",", return_df=True)
         else:
             self.data = pd.read_csv(self.file_path)
 

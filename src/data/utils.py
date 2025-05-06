@@ -29,7 +29,7 @@ def category_column_ascii_correction(data: pd.DataFrame, col_name: str) -> None:
     data[col_name] = data[col_name].apply(lambda x: re.sub(r'[^\x00-\x7F]+', '', str(x)))
 
 
-def concat_and_save_csv(path: str, name: str, encoding: str = "utf-8", save_in_path: bool = False, sep: str = ",", return_df: bool = False) -> pd.DataFrame | None:
+def concat_and_save_csv(path: str, name: str, encoding: str = "utf-8", save_in_path: bool|str = False, sep: str = ",", return_df: bool = False) -> pd.DataFrame | None:
     """
     Reads all the CSV files in `path` and saves their concatenation as a CSV file named `name`
 
@@ -38,7 +38,7 @@ def concat_and_save_csv(path: str, name: str, encoding: str = "utf-8", save_in_p
         name: Name under which to save the CSV file resulted of the concatenation of the other files
 
         encoding: Encoding for reading the CSV files. Also used for saving. Defaults to `utf-8`
-        save_in_path: Wheteher to save the file in the same directory as the rest of CSVs, else it will be saved in the root directory under `name`. Defaults to False
+        save_in_path: Where to save the file. If True it will be saved in the same directory as the rest of CSVs, else it will be saved in the root directory under `name`. If a path is provided it will be saved in it. Defaults to False
         sep: Separator used for reading and saving.
         return_df: Whether to return the merged dataframe. Defaults to False
 
@@ -48,7 +48,12 @@ def concat_and_save_csv(path: str, name: str, encoding: str = "utf-8", save_in_p
 
     files = glob.glob(os.path.join(path, "*.csv"), recursive=False)
     df = pd.concat((pd.read_csv(file, encoding=encoding, sep=sep) for file in files))
-    df.to_csv(os.path.join(path, name) if save_in_path else name, sep=sep, index=False)
+
+    if isinstance(save_in_path, bool):
+        df.to_csv(os.path.join(path, name) if save_in_path else name, sep=sep, index=False)
+    else:
+        os.makedirs(save_in_path, exist_ok=True)
+        df.to_csv(os.path.join(save_in_path, name), sep=sep, index=False)
 
     if return_df:
         return df
