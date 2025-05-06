@@ -108,7 +108,15 @@ class TabPFNDataGenerator:
         # Decode labels back to original values
         generated_y = self.label_encoder.inverse_transform(generated_y.astype(int))
 
-        return generated_x, generated_y
+        # Merge data
+        new_x = np.concatenate([x, generated_x], axis=0)
+        new_y = np.concatenate([y, generated_y], axis=0)
+
+        unique_classes, counts = np.unique(new_y, return_counts=True)
+        class_counts = {cls: int(count) for cls, count in zip(unique_classes, counts)}
+        logging.info("Final counts after Data Augmentation:\n%s", pformat(class_counts))
+
+        return new_x, new_y
 
 
 
