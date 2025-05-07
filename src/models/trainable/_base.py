@@ -29,7 +29,6 @@ class TrainableModel(BaseModel):
 
         pass
 
-
 class SklearnTrainableModel(TrainableModel):
 
     def __init__(self, name: str, model: Any):

@@ -39,7 +39,6 @@ class TabNetModel(SklearnTrainableModel):
             augmentation: Whether to perform data augmentation or not
         """
 
-        # Pretraining
         if self.pretrainer:
             logging.info("Pretraining for TabNet...")
             eval_set = [x_val] if x_val is not None else None
@@ -49,7 +48,6 @@ class TabNetModel(SklearnTrainableModel):
                 **TABNET_PRETRAINING_PARAMS
             )
 
-        # Training
         logging.info("Training TabNet model...")
         if (x_val is not None) and (y_val is not None):
             eval_set = [(x_val, y_val),]
@@ -80,7 +78,7 @@ class TabNetModel(SklearnTrainableModel):
         clf = self.model
         train_loss = clf.history["loss"]
         if "val_accuracy" in clf.history.history.keys():
-            val_metric = clf.history["val_accuracy"]  # Replace with "val_accuracy" if using accuracy
+            val_metric = clf.history["val_accuracy"]
         else:
             val_metric = None
 

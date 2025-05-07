@@ -29,7 +29,6 @@ class TTPipeline(BasePipeline):
         smote_augmentation: bool = False
     ) -> None:
         
-        # Data Augmentation
         if smote_augmentation:
             x_train, y_train = smote(
                 x_train,

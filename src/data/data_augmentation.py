@@ -60,7 +60,6 @@ class TabPFNDataGenerator:
             unique_labels, counts = np.unique(y, return_counts=True)
             max_n_samples = max(counts)
 
-            # Select classes to be augmented
             if not threshold:
                 threshold = TABPFN_DATA_GENERATOR_CONFIG["class_samples_threshold"]
             assert isinstance(threshold, float)
@@ -69,14 +68,12 @@ class TabPFNDataGenerator:
             threshold_value = int(max_n_samples * threshold)
             augmentation_classes = [label for label, count in dict(zip(unique_labels, counts)).items() if count <= threshold_value]
 
-            # Get the examples that are from the augmentation classes
             mask = np.isin(y, augmentation_classes)
             base_x = x[mask]
             base_y = y[mask]
             base_y = self.label_encoder.fit_transform(base_y)
             base_combined = np.column_stack((base_x, base_y.reshape(-1, 1)))
 
-            # Create generator
             n_classes = len(augmentation_classes)
             assert n_classes <= TABPFN_DATA_GENERATOR_EXPERT_MODEL_CONFIG["MAX_NUMBER_OF_CLASSES"], "Number of classes to be augmented exceeded, try with a lower threshold value"
 
@@ -85,7 +82,6 @@ class TabPFNDataGenerator:
                 tabpfn_reg=self.tabpfn_regr
             )
 
-            # Fit generator
             logging.info("Fitting generator...")
             logging.info(f"Classes to be fitted: {augmentation_classes}")
             self.generator.fit(
@@ -94,21 +90,17 @@ class TabPFNDataGenerator:
 
             self.fitted = True
 
-        # Generate samples
         logging.info(f"Generating {n_samples} samples...")
         generated_samples: torch.Tensor = self.generator.generate_synthetic_data(
             n_samples, t=TABPFN_DATA_GENERATOR_CONFIG["t"],
             n_permutations=TABPFN_DATA_GENERATOR_CONFIG["n_permutations"]
         ).numpy()
 
-        # Split back into features and labels
-        generated_x = generated_samples[:, :-1]  # All columns except last
-        generated_y = generated_samples[:, -1]   # Last column
+        generated_x = generated_samples[:, :-1]
+        generated_y = np.abs(generated_samples[:, -1])
         
-        # Decode labels back to original values
         generated_y = self.label_encoder.inverse_transform(generated_y.astype(int))
 
-        # Merge data
         new_x = np.concatenate([x, generated_x], axis=0)
         new_y = np.concatenate([y, generated_y], axis=0)
 
@@ -117,16 +109,6 @@ class TabPFNDataGenerator:
         logging.info("Final counts after Data Augmentation:\n%s", pformat(class_counts))
 
         return new_x, new_y
-
-
-
-
-
-
-
-
-
-
 
 def smote(x: np.ndarray, y: np.ndarray, threshold: Optional[float] = None, n: Optional[int] = None) -> tuple[np.ndarray, np.ndarray]:
     """

@@ -68,10 +68,8 @@ class LLModel(BaseModel):
             A list containing the lists of predicted labels for each test input. As many predictions (candidates) for each input as specified in the gneration configuration.
         """
         
-        # Extract possible labels from icl_data
         possible_labels = set(icl_data[class_column].unique())
         
-        # Prepare few-shot context
         icl_inputs = jsonize_rows(icl_data.drop(columns=[class_column]))
         context = (
             f"You are performing the following classification task: {task}\n"
@@ -81,7 +79,6 @@ class LLModel(BaseModel):
             context += str({"Input": i, "Output": o}) + "\n"
         context += "\n Where Output is the classification label for each data entry.\n"
         
-        # Define instructions
         pre_instruction = "Classify the following input and provide the corresponding Output:\n"
         last_instruction = (
             "Ensure you provide only the raw Output and nothing else."
@@ -136,7 +133,7 @@ class Mistral(LLModel):
         max_tries=BACKOFF_MAX_TRIES,
         factor=BACKOFF_FACTOR,
         jitter=backoff.full_jitter,
-        giveup=lambda e: "429" not in str(e),  # Retry only on 429 errors
+        giveup=lambda e: "429" not in str(e),
         on_backoff=log_backoff
     )
     def ask(self, instructions: str, context: Optional[str] = None, **generation_config) -> dict[str, list]:
