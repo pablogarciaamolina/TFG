@@ -184,11 +184,11 @@ class Gemini(LLModel):
 
     @backoff.on_exception(
         backoff.expo,
-        exception=google.genai.errors.ClientError,
+        exception=(google.genai.errors.ClientError, google.genai.errors.ServerError),
         max_tries=BACKOFF_MAX_TRIES,
         factor=BACKOFF_FACTOR,
         jitter=backoff.full_jitter,
-        giveup=lambda e: "429" not in str(e),
+        giveup=lambda e: not ("429" in str(e) or "503" in str(e)),
         on_backoff=log_backoff
     )
     def ask(self, instructions: str, context: Optional[str] = None, **generation_config) -> dict[str, list]:
