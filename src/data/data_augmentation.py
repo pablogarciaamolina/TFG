@@ -85,7 +85,8 @@ class TabPFNDataGenerator:
             logging.info("Fitting generator...")
             logging.info(f"Classes to be fitted: {augmentation_classes}")
             self.generator.fit(
-                torch.from_numpy(base_combined)
+                torch.from_numpy(base_combined),
+
             )
 
             self.fitted = True
@@ -97,8 +98,12 @@ class TabPFNDataGenerator:
         ).numpy()
 
         generated_x = generated_samples[:, :-1]
-        generated_y = np.abs(generated_samples[:, -1])
+        generated_y = generated_samples[:, -1]
         
+        valid_classes = np.arange(len(self.label_encoder.classes_))
+        mask = np.isin(generated_y, valid_classes)
+        generated_x = generated_x[mask]
+        generated_y = generated_y[mask]
         generated_y = self.label_encoder.inverse_transform(generated_y.astype(int))
 
         new_x = np.concatenate([x, generated_x], axis=0)
