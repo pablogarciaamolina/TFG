@@ -18,3 +18,12 @@
 # Other
 
 - Update README!
+
+- README:
+    - Put environment variables info in the README
+        - API keys
+            - Gemini
+            - kaggle
+            - mistral
+    - Put information about the data
+        - features of each dataset
