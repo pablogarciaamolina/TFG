@@ -34,7 +34,6 @@ class CICIDS2017(TabularDataset):
         self.default_config.update(kwargs)
 
         # Routes
-        self.dataset_folder = self.dataset_folder
         self.raw_data_dir = os.path.abspath(os.path.join(DATA_DIR, "CIC-IDS2017", self.dataset_folder))
         self.processed_data_dir = os.path.abspath(os.path.join(DATA_DIR, "CIC-IDS2017", self.processed_data_folder))
         url = CIC_IDS2017_URL
@@ -189,7 +188,7 @@ class CICIDS2017(TabularDataset):
         Method for executing an analysis over the CIC-IDS20217 dataset and saving results on memory
         """
 
-        save_directory = os.path.join(ANALYSIS_PATH, self.dataset_folder)
+        save_directory = os.path.join(ANALYSIS_PATH, self.processed_data_dir)
         os.makedirs(save_directory, exist_ok=True)
 
         logging.info(f"Starting CIC-IDS2017 {'(extended)' if self.extended else ''} analysis...")
