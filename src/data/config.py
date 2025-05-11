@@ -1,5 +1,12 @@
+import os
+
+
 DATA_DIR = "data"
 ANALYSIS_PATH = "results"
+
+#KAGGLE
+KAGGLE_USERNAME = os.environ.get("KAGGLE_USERNAME", None)
+KAGGLE_KEY = os.environ.get("KAGGLE_KEY", None)
 
 # CIC-IDS2017
 EXTENDED_CIC_IDS2017_URL = "http://205.174.165.80/CICDataset/CIC-IDS-2017/Dataset/CIC-IDS-2017/CSVs/GeneratedLabelledFlows.zip"
@@ -26,6 +33,14 @@ CIC_IDS2017_CLASSES_MAPPING = {
 CICIDS2017_DEFAULT_CONFIG = {
     "pca": True,
     "classes_mapping": True
+}
+
+# N-BaIoT
+N_BAIOT_URL = 'https://www.kaggle.com/api/v1/datasets/download/mkashifn/nbaiot-dataset'
+N_BAIOT_KAGGLE_ENDPOINT = 'mkashifn/nbaiot-dataset'
+
+N_BAIOT_DEFAULT_CONFIG = {
+    "target_column_name": "Label"
 }
 
 # DATA AUGMENTATION
