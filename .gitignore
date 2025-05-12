@@ -134,4 +134,4 @@ cython_debug/
 *.csv
 models/*
 local/*
-data/
+/data/*
