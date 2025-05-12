@@ -15,6 +15,8 @@ from ._base import TabularDataset
 class Kaggle_Dataset(TabularDataset):
 
     def __init__(self, data_dir, file_name, url = None):
+        """
+        """
         
         from kaggle.api.kaggle_api_extended import KaggleApi
 
@@ -126,7 +128,7 @@ class N_BaIoT(Kaggle_Dataset):
                         self.data[col] = self.data[col].astype(np.int32)
             logging.info("Quantization...DONE")
 
-        if self.default_config["pca"]:
+        if self.config["pca"]:
             logging.info("Starting PCA...")
             features = self.data.drop('Label', axis = 1)
             attacks = self.data['Label']
@@ -145,7 +147,7 @@ class N_BaIoT(Kaggle_Dataset):
             self.data['Label'] = attacks.values
             logging.info("PCA complete.")
 
-        if self.default_config["classes_mapping"]:
+        if self.config["classes_mapping"]:
 
             self.data["Label"] = self.data['Label'].map(N_BAIOT_CLASSES_MAPPING)
             logging.info("Classes mapping complete.")
