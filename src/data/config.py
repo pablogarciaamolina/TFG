@@ -38,9 +38,26 @@ CICIDS2017_DEFAULT_CONFIG = {
 # N-BaIoT
 N_BAIOT_URL = 'https://www.kaggle.com/api/v1/datasets/download/mkashifn/nbaiot-dataset'
 N_BAIOT_KAGGLE_ENDPOINT = 'mkashifn/nbaiot-dataset'
+N_BAIOT_TARGET_COLUMN_NAME = "Label"
 
 N_BAIOT_DEFAULT_CONFIG = {
-    "target_column_name": "Label"
+    "64_to_32_quantization": True,
+    "pca": True,
+    "classes_mapping": True
+}
+
+N_BAIOT_CLASSES_MAPPING = {
+    'benign': "benign",
+    'gafgyt-combo': "gafgyt",
+    'gafgyt-junk': "gafgyt",
+    'gafgyt-scan': "gafgyt",
+    'gafgyt-tcp': "gafgyt",
+    'gafgyt-udp': "gafgyt",
+    'mirai-ack': "mirai",
+    'mirai-scan': "mirai",
+    'mirai-syn': "mirai",
+    'mirai-udp': "mirai",
+    'mirai-udpplain': "mirai"
 }
 
 # DATA AUGMENTATION
