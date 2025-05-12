@@ -81,7 +81,7 @@ class N_BaIoT(Kaggle_Dataset):
             self.data.to_csv(self.file_path, sep=",", index=False)
             logging.info(f"Saving cleaned data...DONE")
         else:
-            logging.info(f"Collecting data form saved ({self.file_path})")
+            logging.info(f"Collecting data from saved ({self.file_path})")
             self.data = pd.read_csv(self.file_path)
 
         logging.info("Done collecting data")
