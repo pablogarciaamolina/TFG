@@ -1,6 +1,5 @@
 import os
 import logging
-import zipfile
 import glob
 import re
 
@@ -9,8 +8,8 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import IncrementalPCA
 
-from .config import DATA_DIR, KAGGLE_USERNAME, KAGGLE_KEY, N_BAIOT_URL, N_BAIOT_KAGGLE_ENDPOINT, N_BAIOT_DEFAULT_CONFIG, N_BAIOT_CLASSES_MAPPING, N_BAIOT_TARGET_COLUMN_NAME
-from ._base import TabularDataset
+from src.data.config import DATA_DIR, KAGGLE_USERNAME, KAGGLE_KEY, N_BAIOT_URL, N_BAIOT_KAGGLE_ENDPOINT, N_BAIOT_DEFAULT_CONFIG, N_BAIOT_CLASSES_MAPPING, N_BAIOT_TARGET_COLUMN_NAME
+from src.data._base import TabularDataset
 
 class Kaggle_Dataset(TabularDataset):
 
