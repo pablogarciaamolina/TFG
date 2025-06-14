@@ -1,21 +1,32 @@
 # TFG
-AI-based Intrusion Detection Systems for IoT Networks
+**AI-based Intrusion Detection Systems for IoT Networks**
 
-[![Status](https://img.shields.io/badge/status-WIP-orange)]()
+A framework for the investigation related to my final project.
+
+
 [![Python](https://img.shields.io/badge/python-3.10+-blue)]()
-
 
 ## Table of Contents
 
-...
-
-## Overview - Motivation
-
-Credits:
-    Sklearn
-    [TabNet](https://github.com/dreamquark-ai/tabnet) 
-    [TabPFN](https://github.com/phillipburgess/tabpfn)
-
+1. [Project Structure](#project-structure)  
+2. [How To Use](#how-to-use)  
+3. [Modules - Specs](#modules---specs)  
+   - [DATA](#data)  
+     - [Modules Hierarchy](#modules-hierarchy)  
+     - [Configurations](#configurations)  
+       - [Kaggle Configuration](#kaggle-configuration)  
+       - [CIC-IDS2017 Configuration](#cic-ids2017-configuration)  
+       - [N-BaIoT Configuration](#n-baiot)  
+       - [Data Augmentation](#data-augmentation)  
+   - [MODELS](#models)  
+     - [Modules Hierarchy](#modules-hierarchy-1)  
+     - [Configurations](#configurations-1)  
+       - [TabNet Configuration Parameters](#tabnet-configuration-parameters)  
+       - [ML Models Configuration Parameters](#ml-models-configuration-parameters)  
+       - [TabPFN Configuration Parameters](#tabpfn-configuration-parameters)  
+       - [LLMs Configuration Parameters](#llms-configuration-parameters)  
+   - [PIPELINES](#pipelines)  
+     - [Modules Hierarchy](#modules-hierarchy-2)
 
 ## Project Structure
 
@@ -23,9 +34,13 @@ Credits:
 TFG/
 ├── src/
 │   ├── data/
+│   │   ├── tabular/
+│   │   │   ├── ...
+│   │   │   ├── cic_ids2017.py
+│   │   │   ├── n_baiot.py
 │   │   ├── ...
-│   │   ├── cic_ids2017.py
 │   │   ├── config.py
+│   │   ├── data_augmentation.py
 │   │   ├── utils.py
 │   ├── models/
 │   │   ├── API/
@@ -35,30 +50,30 @@ TFG/
 │   │   │   ├── ...
 │   │   │   ├── ml.py
 │   │   │   ├── tabnet.py
+│   │   │   ├── tabpfn.py
 │   │   ├── ...
 │   │   ├── config.py
+│   │   ├── utils.py
 │   ├── pipelines/
 │   │   ├── ...
 │   │   ├── pipelines.py
 │   │   ├── utils.py
 ├── .gitgnore
 ├── README.md
-├── develop_guide.md
 └── .*.ipynb (example notebooks)
 ```
 
 ## How To Use
 
-Based on modules ...
+This framework is based on the idea of modues for dealing with all the steps on the development of AI models. Just by selecting one compatible module from each category, one can establish the model, train on a dataset and measure the performance.
 
+The code is divided into three main categories: ``data``, ``models`` and ``pipelines``. Each contains a series of modules that can be used and easily changed for research. Also, this structure allows for great expandability, making very convenient the extension of functionalities.
+
+The repository includes code notebooks with examples on how to use each of the modules in a end-to-end scenario.
 
 ## Modules - Specs
 
-The code is divided into three main categories: ``data``, ``models`` and ``pipelines``.
-
-Each contains a series of modules that can be used and easily changed for research. For this purpose, ``data`` and ``models`` contain its own configuration file that allows the user to change the behaviour of its modules. The pipelines can be changed using the arguments of each method.
-
-Also, this structure allows for great expandability, making very convenient the extension of functionalities.
+The specification of how to use each module are contained in the code. For configuration, ``data`` and ``models`` contain their own files that allows the user to change the behaviour of their modules. The pipelines can be changed using the arguments of each method.
 
 ### DATA
 
@@ -68,11 +83,53 @@ This category wraps all the modules related to the datasets. Each dataset counts
 ```
 BaseDataset
 ├── TabularDataset
-│   └── CIC-IDS2017
+│   ├── CIC-IDS2017
+│   └── N-BaIoT
 └── (other possible types)
 ```
 
 #### Configurations
+
+##### Kaggle configuration
+- ``KAGGLE_USERNAME``: Kaggle username
+- ``KAGGLE_KEY``:  Kaggle key
+    - ⚠️ Note that, even if these are repreented as constants, Kaggle authentification REQUIERES THAT THEY ARE SET AS ENVIRONMENT VARIABLES.
+    - ⚠️ Note that Kaggle allows fo rother ways of authentification. However, this method of environment variables is the most convenient. When trying to load a dataset that is imported from kaggle (e.g. N-BaIoT), an error will be raised if the authentification is not properly set.
+
+##### CIC-IDS2017 configuration
+
+- ``CIC_IDS2017_CLASSES_MAPPING``: Mapping of classes for CIC-IDS2017.
+
+- ``CICIDS2017_DEFAULT_CONFIG``
+    - **pca**: Whether to use PCA by default.
+    - **classes_mapping**: Whether to use class mapping by default.
+
+
+##### N-BaIoT
+
+- ``N_BAIOT_DEFAULT_CONFIG``
+    - **64_to_32_quantization**: Whether to use 64bit-to-32 bit quantization by default.
+    - **pca**: Whether to use PCA by default.
+    - **classes_mapping**: Whether to use class mapping by default.
+
+- ``N_BAIOT_CLASSES_MAPPING``: Mapping of classes for N-BaIoT.
+
+##### DATA AUGMENTATION
+
+- ``SMOTE_CONFIG``
+    - **class_samples_threshold**: Percentage that indicates whether to augment a class samples or not depending of the class with the most number of samples.
+    - **n**: The amount of times to augment the data.
+    - **alpha**:  alpha for the beta distribution.
+    - **beta**: beta for the beta distribution.
+
+- ``TABPFN_DATA_GENERATOR_CONFIG``
+    - **class_samples_threshold**: Percentage that multiplies the max amount of samples in a class to determine the classes being augmented.
+    - **t**: Tenperature parameter for sampling. Hieher values produce more diverse samples, lower values produce more deterministic samples.
+    - **n_permutations**: Number of feature permutations to use for generation More permutations may provide more robust results but increase computation time.
+
+- ``TABPFN_DATA_GENERATOR_MODEL_CONFIG`` See [TabPFN](#tabpfn-configuration-parameters)
+
+- ``TABPFN_DATA_GENERATOR_EXPERT_MODEL_CONFIG`` See [TabPFN](#tabpfn-configuration-parameters)
 
 ### MODELS
 
@@ -120,15 +177,15 @@ Below one can find the configuration parameters for every model explained.
     - **optimizer_params**: Parameters for the optimizer
 
 - ``TABNET_PRETRAINING_PARAMS``
-    - max_epochs: Maximum pretraining epochs
-    - batch_size: Batch size. 
+    - **max_epochs**: Maximum pretraining epochs
+    - **batch_size**: Batch size. 
         - ⚠️ Note that if the batch size is higher than the amount of data samples provided (both training or validation) an error will be raised.
-    - patience: Number of epochs with no improvement after which training will be stopped
+    - **patience**: Number of epochs with no improvement after which training will be stopped
 
 - ``TABNET_CONFIG``
     - **n_d**: Dimension of the prediction layer
     - **n_a**: Dimension of the attention layer
-    - **n_steps**: 5,
+    - **n_steps**: Number of successive steps or layers in the network,
     - **gamma**: Scaling factor for attention updates (usually between 1.0 and 2.0)
     - **n_independent**: Number of independent GLU layer in each GLU block
     - **n_shared**: Number of independent GLU layer in each GLU block
@@ -203,6 +260,12 @@ Below one can find the configuration parameters for every model explained.
 
 - ``TABPFN_PARAMS``
     - **predicting_batch_size**: Batch size for predicting using batches. Use -1 for single batch.
+
+- ``TABPFN_MANY_CLASS_CONFIG``
+    - **alphabet_size**: Maximum number of classes the base estimator can handle. Has to be lower or equal than MAX_NUMBER_OF_CLASSES
+    - **n_estimators**: Number of base estimators to train. None for automatic detection, int for  specific number
+    - **n_estimators_redundancy**: Redundancy factor for the auto-calculated number of estimators,
+    - **random_state**: Controls randomization used to initialize the codebook.
 
 ##### LLMs Configuration Parameters
 - ``MISTRAL_API_KEY``: Mistral API key
