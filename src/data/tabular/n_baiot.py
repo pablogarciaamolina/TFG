@@ -7,8 +7,10 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import IncrementalPCA
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-from src.data.config import DATA_DIR, KAGGLE_USERNAME, KAGGLE_KEY, N_BAIOT_URL, N_BAIOT_KAGGLE_ENDPOINT, N_BAIOT_DEFAULT_CONFIG, N_BAIOT_CLASSES_MAPPING, N_BAIOT_TARGET_COLUMN_NAME
+from src.data.config import DATA_DIR, KAGGLE_USERNAME, KAGGLE_KEY, N_BAIOT_URL, N_BAIOT_KAGGLE_ENDPOINT, N_BAIOT_DEFAULT_CONFIG, N_BAIOT_CLASSES_MAPPING, N_BAIOT_TARGET_COLUMN_NAME, ANALYSIS_PATH
 from src.data._base import TabularDataset
 
 class Kaggle_Dataset(TabularDataset):
@@ -152,5 +154,63 @@ class N_BaIoT(Kaggle_Dataset):
             logging.info("Classes mapping complete.")
 
         logging.info("...preprocessing DONE")
+
+    def analysis(self) -> None:
+        """
+        Method for executing an analysis over the N-BaIoT dataset and saving results on memory
+        """
+
+        save_directory = os.path.join(ANALYSIS_PATH, self._get_id())
+        os.makedirs(save_directory, exist_ok=True)
+
+        logging.info(f"Starting N-BaIoT analysis...")
+
+        # CORRELATION MATRIX
+        logging.info("Correlation matrix...")
+        corr = self.data.corr(numeric_only = True).round(2)
+        corr.style.background_gradient(cmap = 'coolwarm', axis = None).format(precision = 2)
+        fig, ax = plt.subplots(figsize = (24, 24))
+        sns.heatmap(corr, cmap = 'coolwarm', annot = False, linewidth = 0.5)
+        plt.title('Correlation Matrix', fontsize = 18)
+        plt.savefig(os.path.join(save_directory, "correlation_matrix.png"))
+
+        # DISTRIBUTION OF ATTACKS
+        attack_counts = self.data['Label'].value_counts()
+        benign_count = attack_counts.get('benign', 0)
+        attack_count = attack_counts.drop('benign').sum()
+        plt.figure(figsize=(6, 6))
+        plt.pie(
+            [benign_count, attack_count],
+            labels=['benign', 'Other Attacks'],
+            autopct='%1.1f%%',
+            colors=['lightblue', 'lightcoral'],
+            textprops={'fontsize': 12}
+        )
+        plt.title('benign vs Other attacks distribution')
+        plt.tight_layout()
+        plt.savefig(os.path.join(save_directory, "attacks_distribution_benign_vs_others.png"))
+
+        attack_only_counts = attack_counts.drop('benign')
+        total_attacks = attack_only_counts.sum()
+        percentages = (attack_only_counts / total_attacks) * 100
+        labels = [
+            label if percentages[i] >= 1 else '' 
+            for i, label in enumerate(attack_only_counts.index)
+        ]
+        def autopct_func(pct):
+            return ('%1.1f%%' % pct) if pct >= 1 else ''
+        pastel_colors = sns.color_palette('pastel', len(attack_only_counts))
+        plt.figure(figsize=(10, 10))
+        plt.pie(
+            attack_only_counts.values,
+            labels=labels,
+            autopct=autopct_func,
+            colors=pastel_colors,
+            textprops={'fontsize': 8}
+        )
+        plt.title('Distribution of attack types')
+        plt.legend(attack_only_counts.index, loc='best', fontsize=8)
+        plt.tight_layout()
+        plt.savefig(os.path.join(save_directory, "attacks_distribution_attacks_only.png"))
 
         
