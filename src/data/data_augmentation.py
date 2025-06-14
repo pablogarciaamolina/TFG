@@ -50,7 +50,7 @@ class TabPFNDataGenerator:
             n_smaples: Number of samples to be generated
             x: Features to fit the generator with
             y: Classes to fit the generator with
-            threshold: Falctor that multiplies the max amount of samples in a class to determine the classes being augmented.
+            threshold: Factor that multiplies the max amount of samples in a class to determine the classes being augmented.
         """
 
         if not self.fitted:
