@@ -188,14 +188,14 @@ class CICIDS2017(TabularDataset):
         Method for executing an analysis over the CIC-IDS20217 dataset and saving results on memory
         """
 
-        save_directory = os.path.join(ANALYSIS_PATH, self.processed_data_dir)
+        save_directory = os.path.join(ANALYSIS_PATH, self._get_id())
         os.makedirs(save_directory, exist_ok=True)
 
         logging.info(f"Starting CIC-IDS2017 {'(extended)' if self.extended else ''} analysis...")
 
         # CORRELATION MATRIX
         logging.info("Correlation matrix...")
-        corr = self.df.corr(numeric_only = True).round(2)
+        corr = self.data.corr(numeric_only = True).round(2)
         corr.style.background_gradient(cmap = 'coolwarm', axis = None).format(precision = 2)
         fig, ax = plt.subplots(figsize = (24, 24))
         sns.heatmap(corr, cmap = 'coolwarm', annot = False, linewidth = 0.5)
@@ -203,23 +203,50 @@ class CICIDS2017(TabularDataset):
         plt.savefig(os.path.join(save_directory, "correlation_matrix.png"))
 
         # DISTRIBUTION OF ATTACKS
-        logging.info("Distribution of attacks...")
-        plt.figure(figsize = (14, 8))
-        ax = sns.countplot(x='Label', hue='Label', data=self.df, palette='pastel', order=self.df['Label'].value_counts().index, legend=False)
-        plt.title('Types of attacks')
-        plt.xlabel('Label')
-        plt.ylabel('Count')
-        plt.xticks(rotation = 90)
-        for p in ax.patches:
-            ax.annotate(f'{p.get_height():.0f}', (p.get_x() + p.get_width() / 2, p.get_height() + 1000), ha = 'center')
-        plt.savefig(os.path.join(save_directory, "attacks_distribution.png"))
+        attack_counts = self.data['Label'].value_counts()
+        benign_count = attack_counts.get('BENIGN', 0)
+        attack_count = attack_counts.drop('BENIGN').sum()
+        plt.figure(figsize=(6, 6))
+        plt.pie(
+            [benign_count, attack_count],
+            labels=['BENIGN', 'Other Attacks'],
+            autopct='%1.1f%%',
+            colors=['lightblue', 'lightcoral'],
+            textprops={'fontsize': 12}
+        )
+        plt.title('BENIGN vs Other attacks distribution')
+        plt.tight_layout()
+        plt.savefig(os.path.join(save_directory, "attacks_distribution_benign_vs_others.png"))
+
+        attack_only_counts = attack_counts.drop('BENIGN')
+        total_attacks = attack_only_counts.sum()
+        percentages = (attack_only_counts / total_attacks) * 100
+        labels = [
+            label if percentages[i] >= 1 else '' 
+            for i, label in enumerate(attack_only_counts.index)
+        ]
+        def autopct_func(pct):
+            return ('%1.1f%%' % pct) if pct >= 1 else ''
+        pastel_colors = sns.color_palette('pastel', len(attack_only_counts))
+        plt.figure(figsize=(10, 10))
+        plt.pie(
+            attack_only_counts.values,
+            labels=labels,
+            autopct=autopct_func,
+            colors=pastel_colors,
+            textprops={'fontsize': 8}
+        )
+        plt.title('Distribution of attack types')
+        plt.legend(attack_only_counts.index, loc='best', fontsize=8)
+        plt.tight_layout()
+        plt.savefig(os.path.join(save_directory, "attacks_distribution_attacks_only.png"))
 
         # BOXPLOT OF FEATURES FOR EACH ATTACK / FIRMS FOR EACH ATTACK
-        logging.info("Distribution of attacks...")
+        logging.info("Distribution of features...")
         os.makedirs(os.path.join(save_directory, "attacks_boxplots"), exist_ok=True)
-        for attack_type in self.df['Label'].unique():
+        for attack_type in self.data['Label'].unique():
 
-            attack_data = self.df[self.df['Label'] == attack_type]
+            attack_data = self.data[self.data['Label'] == attack_type]
             plt.figure(figsize=(20, 20))
             sns.boxplot(data = attack_data.drop(columns = ['Label']), orient = 'h')
             plt.title(f'Boxplot of Features for Attack Type: {attack_type}')
