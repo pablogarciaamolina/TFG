@@ -93,7 +93,7 @@ BaseDataset
 ##### Kaggle configuration
 - ``KAGGLE_USERNAME``: Kaggle username
 - ``KAGGLE_KEY``:  Kaggle key
-    - ⚠️ Note that, even if these are repreented as constants, Kaggle authentification REQUIERES THAT THEY ARE SET AS ENVIRONMENT VARIABLES.
+    - ⚠️ Note that, even if these are represented as constants, Kaggle authentification REQUIERES THAT THEY ARE SET AS ENVIRONMENT VARIABLES.
     - ⚠️ Note that Kaggle allows fo rother ways of authentification. However, this method of environment variables is the most convenient. When trying to load a dataset that is imported from kaggle (e.g. N-BaIoT), an error will be raised if the authentification is not properly set.
 
 ##### CIC-IDS2017 configuration
