@@ -26,6 +26,9 @@ class Kaggle_Dataset(TabularDataset):
         super().__init__(data_dir, file_name, url)
 
 class N_BaIoT(Kaggle_Dataset):
+    """
+    Class for downloading, loading, and processing the N-BaIoT dataset using Kaggle.
+    """
 
     dataset_folder = "N-BaIoT"
 
@@ -73,6 +76,9 @@ class N_BaIoT(Kaggle_Dataset):
         os.makedirs(self.processed_data_dir, exist_ok=True)
 
     def _collect(self):
+        """
+        Retrieves the data whther it is by dowloading it or by cleaning the raw files.
+        """
         
         if not os.path.exists(self.processed_data_dir):
             self._download()
@@ -89,6 +95,9 @@ class N_BaIoT(Kaggle_Dataset):
         logging.info("Done collecting data")
 
     def _clean(self, target_column_name: str = N_BAIOT_TARGET_COLUMN_NAME) -> pd.DataFrame:
+        """
+        Method for cleaning the data, specially when it's in its raw form.
+        """
         
         raw_files = [f for f in glob.glob(os.path.join(self.raw_data_dir, "*.csv"), recursive=False) if re.match(r"[1-9]*\.", os.path.basename(f))]
         
