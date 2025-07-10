@@ -4,6 +4,7 @@ import torch
 ML_SAVING_PATH = os.path.join("models", "ml")
 TABNET_SAVING_PATH = os.path.join("models", "tabnet")
 TABPFN_SAVING_PATH = os.path.join("models", "tabpfn")
+TABICL_SAVING_PATH = os.path.join("models", "tabicl")
 
 # TABNET
 TABNET_PRETRAINER_CONFIG = {
@@ -111,6 +112,33 @@ TABPFN_MANY_CLASS_CONFIG = {
 }
 TABPFN_PARAMS = {
     "predicting_batch_size": 20000 # -1 for one batch (no batch predicting)
+}
+
+# TABICL
+
+TABICL_CONFIG = {
+    "n_estimators": 32,                                        # number of ensemble members
+    "norm_methods": ["none", "power"],                         # normalization methods to try
+    "feat_shuffle_method": "latin",                            # feature permutation strategy
+    "class_shift": True,                                       # whether to apply cyclic shifts to class labels
+    "outlier_threshold": 4.0,                                  # z-score threshold for outlier detection and clipping
+    "softmax_temperature": 0.9,                                # controls prediction confidence
+    "average_logits": True,                                    # whether ensemble averaging is done on logits or probabilities
+    "use_hierarchical": True,                                  # enable hierarchical classification for datasets with many classe
+    "batch_size": 8,                                           # process this many ensemble members together (reduce RAM usage)
+    "use_amp": True,                                           # use automatic mixed precision for faster inference
+    "model_path": None,                                        # where the model checkpoint is stored
+    "allow_auto_download": True,                               # whether automatic download to the specified path is allowed
+    "checkpoint_version": "tabicl-classifier-v1.1-0506.ckpt",  # the version of pretrained checkpoint to use
+    "device": "cuda",                                            # specify device for inference
+    "random_state": 42,                                        # random seed for reproducibility
+    "n_jobs": None,                                            # number of threads to use for PyTorch
+    "verbose": False,                                          # print detailed information during inference
+    "inference_config": None,
+}
+
+TABICL_PARAMS = {
+    "predicting_batch_size": -1
 }
 
 # LLMs

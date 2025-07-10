@@ -12,3 +12,4 @@ google==3.0.0
 google-api-core==2.24.0
 google-genai==1.2.0
 google-generativeai==0.8.3
+tabicl==0.1.3
