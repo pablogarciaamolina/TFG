@@ -130,7 +130,7 @@ TABICL_CONFIG = {
     "model_path": None,                                        # where the model checkpoint is stored
     "allow_auto_download": True,                               # whether automatic download to the specified path is allowed
     "checkpoint_version": "tabicl-classifier-v1.1-0506.ckpt",  # the version of pretrained checkpoint to use
-    "device": "cuda",                                            # specify device for inference
+    "device": None,                                            # specify device for inference
     "random_state": 42,                                        # random seed for reproducibility
     "n_jobs": None,                                            # number of threads to use for PyTorch
     "verbose": False,                                          # print detailed information during inference
