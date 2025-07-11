@@ -10,7 +10,7 @@ from ._base import SklearnTrainableModel
 from src.models.config import TABICL_CONFIG, TABICL_PARAMS, TABICL_SAVING_PATH
 
 
-class TabICL(SklearnTrainableModel):
+class TabICLModel(SklearnTrainableModel):
 
     model: TabICLClassifier
 
@@ -35,7 +35,7 @@ class TabICL(SklearnTrainableModel):
 
         # y_train = self.label_encoder.fit_transform(y_train)
         
-        self.fit(
+        self.model.fit(
             x_train,
             y_train
         )

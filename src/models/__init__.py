@@ -6,7 +6,8 @@ from .trainable import (
     PreConfigured_LinearSVC,
     PreConfigured_LogisticRegression,
     PreConfigured_RandomForest,
-    TabPFNModel
+    TabPFNModel,
+    TabICLModel
 )
 
 from .API import Gemini, Mistral

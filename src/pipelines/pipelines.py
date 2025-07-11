@@ -39,7 +39,7 @@ class TTPipeline(BasePipeline):
             self.model.fit(x_train, y_train, x_val, y_val)
         elif isinstance(self.model, MLClassifier):
             self.model.fit(x_train, y_train, cv=cv, verbose=1)
-        elif isinstance(self.model, TabPFNModel):
+        else:
             self.model.fit(x_train, y_train)
 
     def evaluate(self, x_test, y_test, other_info: str = None) -> dict:
