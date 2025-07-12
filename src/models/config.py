@@ -117,7 +117,7 @@ TABPFN_PARAMS = {
 # TABICL
 
 TABICL_CONFIG = {
-    "n_estimators": 32,                                        # number of ensemble members
+    "n_estimators": 16,                                        # number of ensemble members
     "norm_methods": ["none", "power"],                         # normalization methods to try
     "feat_shuffle_method": "latin",                            # feature permutation strategy
     "class_shift": True,                                       # whether to apply cyclic shifts to class labels
@@ -133,12 +133,12 @@ TABICL_CONFIG = {
     "device": None,                                            # specify device for inference
     "random_state": 42,                                        # random seed for reproducibility
     "n_jobs": None,                                            # number of threads to use for PyTorch
-    "verbose": False,                                          # print detailed information during inference
+    "verbose": True,                                          # print detailed information during inference
     "inference_config": None,
 }
 
 TABICL_PARAMS = {
-    "predicting_batch_size": -1
+    "predicting_batch_size": 50000
 }
 
 # LLMs
