@@ -115,25 +115,24 @@ TABPFN_PARAMS = {
 }
 
 # TABICL
-
 TABICL_CONFIG = {
-    "n_estimators": 16,                                        # number of ensemble members
-    "norm_methods": ["none", "power"],                         # normalization methods to try
-    "feat_shuffle_method": "latin",                            # feature permutation strategy
-    "class_shift": True,                                       # whether to apply cyclic shifts to class labels
-    "outlier_threshold": 4.0,                                  # z-score threshold for outlier detection and clipping
-    "softmax_temperature": 0.9,                                # controls prediction confidence
-    "average_logits": True,                                    # whether ensemble averaging is done on logits or probabilities
-    "use_hierarchical": True,                                  # enable hierarchical classification for datasets with many classe
-    "batch_size": 8,                                           # process this many ensemble members together (reduce RAM usage)
-    "use_amp": True,                                           # use automatic mixed precision for faster inference
-    "model_path": None,                                        # where the model checkpoint is stored
-    "allow_auto_download": True,                               # whether automatic download to the specified path is allowed
-    "checkpoint_version": "tabicl-classifier-v1.1-0506.ckpt",  # the version of pretrained checkpoint to use
-    "device": None,                                            # specify device for inference
-    "random_state": 42,                                        # random seed for reproducibility
-    "n_jobs": None,                                            # number of threads to use for PyTorch
-    "verbose": True,                                          # print detailed information during inference
+    "n_estimators": 16,
+    "norm_methods": ["none", "power"],
+    "feat_shuffle_method": "latin",
+    "class_shift": True,
+    "outlier_threshold": 4.0,
+    "softmax_temperature": 0.9,
+    "average_logits": True,
+    "use_hierarchical": True,
+    "batch_size": 8,
+    "use_amp": True,
+    "model_path": None,
+    "allow_auto_download": True,
+    "checkpoint_version": "tabicl-classifier-v1.1-0506.ckpt",
+    "device": None,
+    "random_state": 42,
+    "n_jobs": None,
+    "verbose": True,
     "inference_config": None,
 }
 

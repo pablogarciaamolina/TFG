@@ -149,7 +149,8 @@ BaseModel
 │   │   │   ├── PreConfigured_LogisticRegression
 │   │   │   └── PreConfigured_RandomForest
 │   │   ├── TabNetModel
-│   │   └── TabPFNModel
+│   │   ├── TabPFNModel
+│   │   └── TabICLModel
 │   └── (other kinds of models, like torch-based DL models)
 └── LLModel
     ├── Mistral
@@ -266,6 +267,30 @@ Below one can find the configuration parameters for every model explained.
     - **n_estimators**: Number of base estimators to train. None for automatic detection, int for  specific number
     - **n_estimators_redundancy**: Redundancy factor for the auto-calculated number of estimators,
     - **random_state**: Controls randomization used to initialize the codebook.
+
+##### TabICL Configuration Parameters
+
+- ``TABICL_CONFIG``
+    - **n_estimators**: Number of ensemble members
+    - **norm_methods**: Normalization methods to try
+    - **feat_shuffle_method**: Feature permutation strategy
+    - **class_shift**: Whether to apply cyclic shifts to class labels
+    - **outlier_threshold**: Z-score threshold for outlier detection and clipping
+    - **softmax_temperature**:Ccontrols prediction confidence
+    - **average_logits**: Whether ensemble averaging is done on logits or probabilities
+    - **use_hierarchical**: Enable hierarchical classification for datasets with many classe
+    - **batch_size**: Process this many ensemble members together (reduce RAM usage)
+    - **use_amp**: Use automatic mixed precision for faster inference
+    - **model_path**: Where the model checkpoint is stored
+    - **allow_auto_download**: whether automatic download to the specified path is allowed
+    - **checkpoint_version**: The version of pretrained checkpoint to use
+    - **device**: Specify device for inference
+    - **random_state**: Random seed for reproducibility
+    - **n_jobs**: Number of threads to use for PyTorch
+    - **verbose**: Print detailed information during inference
+
+- ``TABICL_PARAMS``
+    - **predicting_batch_size**: Batch size for predicting using batches. Use -1 for single batch.
 
 ##### LLMs Configuration Parameters
 - ``MISTRAL_API_KEY``: Mistral API key
