@@ -75,9 +75,9 @@ class N_BaIoT(Kaggle_Dataset):
 
         os.makedirs(self.processed_data_dir, exist_ok=True)
 
-    def _collect(self):
+    def _collect(self) -> None:
         """
-        Retrieves the data whther it is by dowloading it or by cleaning the raw files.
+        Retrieves the data whether it is by dowloading it or by cleaning the raw files.
         """
         
         if not os.path.exists(self.processed_data_dir):
@@ -96,7 +96,7 @@ class N_BaIoT(Kaggle_Dataset):
 
     def _clean(self, target_column_name: str = N_BAIOT_TARGET_COLUMN_NAME) -> pd.DataFrame:
         """
-        Method for cleaning the data, specially when it's in its raw form.
+        Method for cleaning the data.
         """
         
         raw_files = [f for f in glob.glob(os.path.join(self.raw_data_dir, "*.csv"), recursive=False) if re.match(r"[1-9]*\.", os.path.basename(f))]

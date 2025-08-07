@@ -60,6 +60,13 @@ N_BAIOT_CLASSES_MAPPING = {
     'mirai-udpplain': "mirai"
 }
 
+# CIC-UNSW
+CICUNSW_URL = "http://cicresearch.ca/CICDataset/CIC-UNSW/Dataset/CICFlowMeter_out.csv"
+
+CICUSNW_DEFAULT_CONFIG = {
+    "pca": True,
+}
+
 # DATA AUGMENTATION
 SMOTE_CONFIG = {
     "class_samples_threshold": 0.3,
