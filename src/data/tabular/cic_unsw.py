@@ -13,6 +13,8 @@ from src.data.utils import features_correction
 
 class CIC_UNSW(TabularDataset):
 
+    dataset_folder = "CIC-UNSW"
+
     def __init__(self, **kwargs):
         
         self.config = CICUSNW_DEFAULT_CONFIG.copy()
