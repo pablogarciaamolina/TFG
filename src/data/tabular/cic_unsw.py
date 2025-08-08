@@ -11,7 +11,7 @@ from src.data.config import DATA_DIR, CICUNSW_URL, CICUSNW_DEFAULT_CONFIG
 from src.data._base import TabularDataset
 from src.data.utils import features_correction
 
-class CICUNSW(TabularDataset):
+class CIC_UNSW(TabularDataset):
 
     def __init__(self, **kwargs):
         
@@ -27,7 +27,7 @@ class CICUNSW(TabularDataset):
     def _get_id(self) -> str:
         
         sorted_values = sorted(self.config.items())
-        return "n_baiot_" + '_'.join([f"{key}({value})" for key, value in sorted_values])
+        return "cic_unsw_" + '_'.join([f"{key}({value})" for key, value in sorted_values])
 
     def _download(self) -> None:
         """
