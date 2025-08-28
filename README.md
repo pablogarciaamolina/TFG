@@ -37,6 +37,7 @@ TFG/
 │   │   ├── tabular/
 │   │   │   ├── ...
 │   │   │   ├── cic_ids2017.py
+│   │   │   ├── cic_unsw.py
 │   │   │   ├── n_baiot.py
 │   │   ├── ...
 │   │   ├── config.py
@@ -49,6 +50,7 @@ TFG/
 │   │   ├── trainable/
 │   │   │   ├── ...
 │   │   │   ├── ml.py
+│   │   │   ├── tabicl.py
 │   │   │   ├── tabnet.py
 │   │   │   ├── tabpfn.py
 │   │   ├── ...
@@ -85,6 +87,7 @@ BaseDataset
 ├── TabularDataset
 │   ├── CIC-IDS2017
 │   └── N-BaIoT
+│   └── CIC-UNSW
 └── (other possible types)
 ```
 
@@ -113,6 +116,11 @@ BaseDataset
     - **classes_mapping**: Whether to use class mapping by default.
 
 - ``N_BAIOT_CLASSES_MAPPING``: Mapping of classes for N-BaIoT.
+
+##### CIC-UNSW configuration
+
+- ``CICUNSW_DEFAULT_CONFIG``
+    - **pca**: Whether to use PCA by default.
 
 ##### DATA AUGMENTATION
 
